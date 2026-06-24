@@ -1,6 +1,8 @@
 package ovh.eukon05.lokit.roleservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
@@ -31,5 +33,10 @@ public class RoleServiceImpl implements RoleService {
         RoleEntity roleEntity = roleMapper.fromCreateRoleDTO(role);
         roleRepository.save(roleEntity);
         return roleEntity.getId();
+    }
+
+    @Override
+    public PagedModel<GetRoleDTO> findAll(Pageable pageable) {
+        return new PagedModel<>(roleRepository.findAll(pageable).map(roleMapper::toGetRoleDTO));
     }
 }

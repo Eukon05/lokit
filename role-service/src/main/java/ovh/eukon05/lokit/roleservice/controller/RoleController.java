@@ -1,10 +1,12 @@
 package ovh.eukon05.lokit.roleservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
-import ovh.eukon05.lokit.roleservice.mapper.RoleMapper;
 import ovh.eukon05.lokit.roleservice.service.RoleService;
 
 import java.util.UUID;
@@ -21,8 +23,12 @@ public class RoleController {
     }
 
     @PostMapping
-    public UUID createRole(@RequestBody CreateRoleDTO roleDTO) {
+    public UUID createRole(@RequestBody @Valid CreateRoleDTO roleDTO) {
         return roleService.createRole(roleDTO);
     }
 
+    @GetMapping
+    public PagedModel<GetRoleDTO> findAll(Pageable pageable) {
+        return roleService.findAll(pageable);
+    }
 }

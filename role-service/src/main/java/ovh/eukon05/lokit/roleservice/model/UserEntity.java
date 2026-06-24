@@ -10,13 +10,14 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@Table(name = "AppUser")
 @Data
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
     private Set<RoleEntity> roles;
 
     @CreationTimestamp
