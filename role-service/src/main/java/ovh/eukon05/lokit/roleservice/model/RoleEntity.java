@@ -1,7 +1,8 @@
 package ovh.eukon05.lokit.roleservice.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,7 +11,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "AppRole")
-@Data
+@Getter
+@Setter
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

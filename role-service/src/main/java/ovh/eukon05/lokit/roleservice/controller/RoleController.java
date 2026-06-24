@@ -7,7 +7,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
-import ovh.eukon05.lokit.roleservice.service.RoleService;
+import ovh.eukon05.lokit.roleservice.facade.RoleFacade;
 
 import java.util.UUID;
 
@@ -15,20 +15,20 @@ import java.util.UUID;
 @RequestMapping("/api/v1/role")
 @RequiredArgsConstructor
 public class RoleController {
-    private final RoleService roleService;
+    private final RoleFacade roleFacade;
 
     @GetMapping("/{roleId}")
     public GetRoleDTO findById(@PathVariable UUID roleId) {
-        return roleService.findById(roleId);
+        return roleFacade.getRole(roleId);
     }
 
     @PostMapping
     public UUID createRole(@RequestBody @Valid CreateRoleDTO roleDTO) {
-        return roleService.createRole(roleDTO);
+        return roleFacade.createRole(roleDTO);
     }
 
     @GetMapping
     public PagedModel<GetRoleDTO> findAll(Pageable pageable) {
-        return roleService.findAll(pageable);
+        return roleFacade.findAll(pageable);
     }
 }
