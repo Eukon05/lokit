@@ -1,3 +1,11 @@
 spring:
   application:
     name: room-service
+  grpc:
+    client:
+      channel:
+        role-service:
+          target: 0.0.0.0:9090
+
+server:
+  port: 8081

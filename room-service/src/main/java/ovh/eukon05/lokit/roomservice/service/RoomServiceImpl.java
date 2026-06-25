@@ -38,6 +38,7 @@ public class RoomServiceImpl implements RoomService {
     public void addToRoomACL(UUID roomId, UUID roleId) {
         RoomEntity room = getRoom(roomId);
 
+        if (room.getAcl().contains(roleId)) return; // protects from unnecessary gRPC calls
         if (!roleServiceClient.checkRoleExists(roleId)) throw new RoleNotFoundException();
 
         room.getAcl().add(roleId);
