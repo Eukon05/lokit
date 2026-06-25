@@ -12,6 +12,7 @@
     <modules>
         <module>role-service</module>
         <module>room-service</module>
+        <module>common</module>
     </modules>
 
     <properties>
