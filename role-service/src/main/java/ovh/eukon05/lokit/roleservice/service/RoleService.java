@@ -11,5 +11,7 @@ public interface RoleService {
 
     UUID saveRole(RoleEntity role);
 
+    void deleteRole(UUID id);
+
     Page<RoleEntity> findAll(Pageable pageable);
 }

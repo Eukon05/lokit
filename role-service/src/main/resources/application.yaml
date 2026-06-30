@@ -13,3 +13,9 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+  rabbitmq:
+    username: user
+    password: password
+    host: localhost
+    port: 5672

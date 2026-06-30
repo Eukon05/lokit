@@ -28,6 +28,10 @@ public class RoleFacade {
         return roleService.saveRole(en);
     }
 
+    public void deleteRole(UUID id) {
+        roleService.deleteRole(id);
+    }
+
     public PagedModel<GetRoleDTO> findAll(Pageable pageable) {
         return new PagedModel<>(roleService.findAll(pageable).map(roleMapper::toGetRoleDTO));
     }

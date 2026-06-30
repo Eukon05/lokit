@@ -16,4 +16,6 @@ public interface RoomService {
     void addToRoomACL(UUID roomId, UUID roleId);
 
     void removeFromRoomACL(UUID roomId, UUID roleId);
+
+    void removeFromAllACLs(UUID roleId);
 }

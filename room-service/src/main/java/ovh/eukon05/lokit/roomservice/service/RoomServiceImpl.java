@@ -1,5 +1,6 @@
 package ovh.eukon05.lokit.roomservice.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import ovh.eukon05.lokit.roomservice.exception.RoomNotFoundException;
 import ovh.eukon05.lokit.roomservice.model.RoomEntity;
 import ovh.eukon05.lokit.roomservice.repository.RoomRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -50,6 +52,14 @@ public class RoomServiceImpl implements RoomService {
         RoomEntity room = getRoom(roomId);
         room.getAcl().remove(roleId);
         roomRepository.save(room);
+    }
+
+    @Override
+    @Transactional
+    public void removeFromAllACLs(UUID roleId) {
+        List<RoomEntity> rooms = roomRepository.findAllByAclContains(roleId);
+        for (RoomEntity room : rooms) room.getAcl().remove(roleId);
+        roomRepository.saveAll(rooms);
     }
 
     private RoomEntity getRoom(UUID id) {

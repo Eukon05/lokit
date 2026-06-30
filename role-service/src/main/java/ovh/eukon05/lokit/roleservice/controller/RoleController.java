@@ -31,4 +31,9 @@ public class RoleController {
     public PagedModel<GetRoleDTO> findAll(Pageable pageable) {
         return roleFacade.findAll(pageable);
     }
+
+    @DeleteMapping("/{roleId}")
+    public void deleteRole(@PathVariable UUID roleId) {
+        roleFacade.deleteRole(roleId);
+    }
 }

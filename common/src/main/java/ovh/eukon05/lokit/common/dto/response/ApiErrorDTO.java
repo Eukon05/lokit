@@ -1,4 +1,4 @@
-package ovh.eukon05.lokit.common.dto;
+package ovh.eukon05.lokit.common.dto.response;
 
 import java.time.Instant;
 import java.util.Map;

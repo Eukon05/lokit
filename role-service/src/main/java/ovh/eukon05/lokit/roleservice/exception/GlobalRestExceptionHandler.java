@@ -8,7 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import ovh.eukon05.lokit.common.dto.ApiErrorDTO;
+import ovh.eukon05.lokit.common.dto.response.ApiErrorDTO;
 
 import java.time.Instant;
 import java.util.Collections;
