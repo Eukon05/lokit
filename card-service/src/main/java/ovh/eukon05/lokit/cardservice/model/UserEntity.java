@@ -1,9 +1,6 @@
-package ovh.eukon05.lokit.roleservice.model;
+package ovh.eukon05.lokit.cardservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,15 +12,15 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "RoleUser")
+@Table(name = "CardUser")
 @Getter
 @Setter
 public class UserEntity {
     @Id
     private UUID id;
 
-    @ManyToMany
-    private Set<RoleEntity> roles = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CardEntity> cards = new HashSet<>();
 
     @CreationTimestamp
     private Instant createdAt;

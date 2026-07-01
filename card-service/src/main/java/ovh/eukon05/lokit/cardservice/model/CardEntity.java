@@ -1,33 +1,30 @@
-package ovh.eukon05.lokit.roleservice.model;
+package ovh.eukon05.lokit.cardservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "RoleUser")
+@Table(name = "AppCard")
 @Getter
 @Setter
-public class UserEntity {
+public class CardEntity {
     @Id
     private UUID id;
 
-    @ManyToMany
-    private Set<RoleEntity> roles = new HashSet<>();
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private UserEntity user;
+
+    private String name;
 
     @CreationTimestamp
     private Instant createdAt;
-
     @UpdateTimestamp
     private Instant updatedAt;
 }

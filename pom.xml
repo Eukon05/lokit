@@ -13,6 +13,7 @@
         <module>common</module>
         <module>role-service</module>
         <module>room-service</module>
+        <module>card-service</module>
     </modules>
 
     <properties>
