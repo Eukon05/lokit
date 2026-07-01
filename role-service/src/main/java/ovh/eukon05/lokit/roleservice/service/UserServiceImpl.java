@@ -33,7 +33,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    private UserEntity getUser(UUID userId) {
+    @Override
+    public UserEntity getUser(UUID userId) {
         return userRepository.findById(userId).orElseGet(() -> {
             if (identityClient.checkUserExists(userId)) {
                 UserEntity userEntity = new UserEntity();

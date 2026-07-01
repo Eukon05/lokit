@@ -2,6 +2,8 @@ package ovh.eukon05.lokit.roleservice.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ovh.eukon05.lokit.roleservice.dto.response.GetUserDTO;
+import ovh.eukon05.lokit.roleservice.mapper.UserMapper;
 import ovh.eukon05.lokit.roleservice.model.RoleEntity;
 import ovh.eukon05.lokit.roleservice.service.RoleService;
 import ovh.eukon05.lokit.roleservice.service.UserService;
@@ -13,6 +15,11 @@ import java.util.UUID;
 public class UserFacade {
     private final UserService userService;
     private final RoleService roleService;
+    private final UserMapper userMapper;
+
+    public GetUserDTO getUser(UUID userId) {
+        return userMapper.toGetUserDTO(userService.getUser(userId));
+    }
 
     public void assignRole(UUID userId, UUID roleId) {
         RoleEntity role = roleService.findById(roleId);
