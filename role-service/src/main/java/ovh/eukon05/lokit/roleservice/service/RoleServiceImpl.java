@@ -4,20 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.RoleDeletedEventDTO;
-import ovh.eukon05.lokit.roleservice.client.EventClient;
 import ovh.eukon05.lokit.roleservice.exception.RoleNotFoundException;
 import ovh.eukon05.lokit.roleservice.model.RoleEntity;
 import ovh.eukon05.lokit.roleservice.repository.RoleRepository;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
-    private final EventClient eventClient;
 
     @Override
     public RoleEntity findById(UUID id) {
@@ -33,7 +29,6 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void deleteRole(UUID id) {
         roleRepository.deleteById(id);
-        eventClient.sendRoleDeletedEvent(new RoleDeletedEventDTO(Instant.now(), id));
     }
 
     @Override
