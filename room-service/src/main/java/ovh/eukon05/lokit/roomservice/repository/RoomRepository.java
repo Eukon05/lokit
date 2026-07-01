@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface RoomRepository extends JpaRepository<RoomEntity, UUID> {
     List<RoomEntity> findAllByAclContains(UUID roleId);
+
+    List<RoomEntity> findAllByActiveTrue();
 }

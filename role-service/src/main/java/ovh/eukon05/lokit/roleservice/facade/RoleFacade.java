@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.common.dto.event.RoleDeletedEventDTO;
+import ovh.eukon05.lokit.common.dto.event.RoleDisabledEventDTO;
+import ovh.eukon05.lokit.common.dto.event.RoleEnabledEventDTO;
 import ovh.eukon05.lokit.roleservice.client.EventClient;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
@@ -35,6 +37,18 @@ public class RoleFacade {
     public void deleteRole(UUID id) {
         roleService.deleteRole(id);
         eventClient.sendRoleDeletedEvent(new RoleDeletedEventDTO(Instant.now(), id));
+    }
+
+    public GetRoleDTO enableRole(UUID id) {
+        RoleEntity role = roleService.enableRole(id);
+        eventClient.sendRoleEnabledEvent(new RoleEnabledEventDTO(Instant.now(), id));
+        return roleMapper.toGetRoleDTO(role);
+    }
+
+    public GetRoleDTO disableRole(UUID id) {
+        RoleEntity role = roleService.disableRole(id);
+        eventClient.sendRoleDisabledEvent(new RoleDisabledEventDTO(Instant.now(), id));
+        return roleMapper.toGetRoleDTO(role);
     }
 
     public PagedModel<GetRoleDTO> findAll(Pageable pageable) {

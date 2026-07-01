@@ -22,6 +22,7 @@ public class RoleEntity {
 
     private String name;
     private String description;
+    private boolean active = true;
 
     @CreationTimestamp
     private Instant createdAt;

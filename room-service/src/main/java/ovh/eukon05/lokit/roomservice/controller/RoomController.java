@@ -41,4 +41,14 @@ public class RoomController {
     public void removeFromRoomACL(@PathVariable UUID roomId, @PathVariable UUID roleId) {
         roomFacade.removeFromRoomACL(roomId, roleId);
     }
+
+    @PostMapping("/{roomId}/enable")
+    public GetRoomDTO enableRoom(@PathVariable UUID roomId) {
+        return roomFacade.enableRoom(roomId);
+    }
+
+    @PostMapping("/{roomId}/disable")
+    public GetRoomDTO disableRoom(@PathVariable UUID roomId) {
+        return roomFacade.disableRoom(roomId);
+    }
 }

@@ -62,6 +62,20 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.saveAll(rooms);
     }
 
+    @Override
+    public RoomEntity enableRoom(UUID id) {
+        RoomEntity room = getRoom(id);
+        room.setActive(true);
+        return roomRepository.save(room);
+    }
+
+    @Override
+    public RoomEntity disableRoom(UUID id) {
+        RoomEntity room = getRoom(id);
+        room.setActive(false);
+        return roomRepository.save(room);
+    }
+
     private RoomEntity getRoom(UUID id) {
         return roomRepository.findById(id).orElseThrow(RoomNotFoundException::new);
     }

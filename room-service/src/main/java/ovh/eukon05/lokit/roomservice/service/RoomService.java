@@ -18,4 +18,8 @@ public interface RoomService {
     void removeFromRoomACL(UUID roomId, UUID roleId);
 
     void removeFromAllACLs(UUID roleId);
+
+    RoomEntity enableRoom(UUID id);
+
+    RoomEntity disableRoom(UUID id);
 }

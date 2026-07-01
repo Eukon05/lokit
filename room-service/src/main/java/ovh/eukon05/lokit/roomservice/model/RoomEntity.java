@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,7 +19,8 @@ public class RoomEntity {
 
     private String name;
     private String description;
+    private boolean active = true;
 
     @ElementCollection
-    private Set<UUID> acl;
+    private Set<UUID> acl = new HashSet<>();
 }

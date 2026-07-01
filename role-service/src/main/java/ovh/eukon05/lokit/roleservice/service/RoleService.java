@@ -13,5 +13,9 @@ public interface RoleService {
 
     void deleteRole(UUID id);
 
+    RoleEntity enableRole(UUID id);
+
+    RoleEntity disableRole(UUID id);
+
     Page<RoleEntity> findAll(Pageable pageable);
 }

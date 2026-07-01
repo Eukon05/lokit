@@ -36,4 +36,14 @@ public class RoleController {
     public void deleteRole(@PathVariable UUID roleId) {
         roleFacade.deleteRole(roleId);
     }
+
+    @PostMapping("/{roleId}/enable")
+    public GetRoleDTO enableRole(@PathVariable UUID roleId) {
+        return roleFacade.enableRole(roleId);
+    }
+
+    @PostMapping("/{roleId}/disable")
+    public GetRoleDTO disableRole(@PathVariable UUID roleId) {
+        return roleFacade.disableRole(roleId);
+    }
 }

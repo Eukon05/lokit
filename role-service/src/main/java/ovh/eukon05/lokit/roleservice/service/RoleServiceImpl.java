@@ -32,6 +32,20 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public RoleEntity enableRole(UUID id) {
+        RoleEntity role = findById(id);
+        role.setActive(true);
+        return roleRepository.save(role);
+    }
+
+    @Override
+    public RoleEntity disableRole(UUID id) {
+        RoleEntity role = findById(id);
+        role.setActive(false);
+        return roleRepository.save(role);
+    }
+
+    @Override
     public Page<RoleEntity> findAll(Pageable pageable) {
         return roleRepository.findAll(pageable);
     }
