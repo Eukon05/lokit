@@ -36,4 +36,14 @@ public class CardController {
     public void deleteCard(@PathVariable UUID cardId) {
         cardFacade.deleteCard(cardId);
     }
+
+    @PostMapping("/{cardId}/enable")
+    public void enableCard(@PathVariable UUID cardId) {
+        cardFacade.enableCard(cardId);
+    }
+
+    @PostMapping("/{cardId}/disable")
+    public void disableCard(@PathVariable UUID cardId) {
+        cardFacade.disableCard(cardId);
+    }
 }

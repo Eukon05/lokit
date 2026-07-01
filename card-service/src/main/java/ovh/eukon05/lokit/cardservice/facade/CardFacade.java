@@ -14,6 +14,8 @@ import ovh.eukon05.lokit.cardservice.service.CardService;
 import ovh.eukon05.lokit.cardservice.service.UserService;
 import ovh.eukon05.lokit.common.dto.event.CardCreatedEventDTO;
 import ovh.eukon05.lokit.common.dto.event.CardDeletedEventDTO;
+import ovh.eukon05.lokit.common.dto.event.CardDisabledEventDTO;
+import ovh.eukon05.lokit.common.dto.event.CardEnabledEventDTO;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -42,6 +44,16 @@ public class CardFacade {
     public void deleteCard(UUID id) {
         cardService.deleteCard(id);
         eventClient.sendCardDeletedEvent(new CardDeletedEventDTO(Instant.now(), id));
+    }
+
+    public void enableCard(UUID id) {
+        CardEntity card = cardService.enableCard(id);
+        eventClient.sendCardEnabledEvent(new CardEnabledEventDTO(Instant.now(), id, card.getUser().getId()));
+    }
+
+    public void disableCard(UUID id) {
+        cardService.disableCard(id);
+        eventClient.sendCardDisabledEvent(new CardDisabledEventDTO(Instant.now(), id));
     }
 
     public PagedModel<GetCardDTO> findAll(Pageable pageable) {

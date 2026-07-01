@@ -1,0 +1,15 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "ovh.eukon05.lokit.common.proto";
+option java_outer_classname = "CardServiceProto";
+
+message GetCardReply {
+  string cardId = 1;
+  string userId = 2;
+}
+
+service CardService {
+  rpc ListActiveCards(google.protobuf.Empty) returns (stream GetCardReply);
+}

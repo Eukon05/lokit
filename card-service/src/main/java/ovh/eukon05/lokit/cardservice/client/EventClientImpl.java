@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.cardservice.config.RabbitConfig;
 import ovh.eukon05.lokit.common.dto.event.CardCreatedEventDTO;
 import ovh.eukon05.lokit.common.dto.event.CardDeletedEventDTO;
+import ovh.eukon05.lokit.common.dto.event.CardDisabledEventDTO;
+import ovh.eukon05.lokit.common.dto.event.CardEnabledEventDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,16 @@ public class EventClientImpl implements EventClient {
     @Override
     public void sendCardDeletedEvent(CardDeletedEventDTO dto) {
         sendObject(RabbitConfig.CARD_DELETED_ROUTING_KEY, dto);
+    }
+
+    @Override
+    public void sendCardEnabledEvent(CardEnabledEventDTO dto) {
+        sendObject(RabbitConfig.CARD_ENABLED_ROUTING_KEY, dto);
+    }
+
+    @Override
+    public void sendCardDisabledEvent(CardDisabledEventDTO dto) {
+        sendObject(RabbitConfig.CARD_DISABLED_ROUTING_KEY, dto);
     }
 
     private void sendObject(String routingKey, Object message) {

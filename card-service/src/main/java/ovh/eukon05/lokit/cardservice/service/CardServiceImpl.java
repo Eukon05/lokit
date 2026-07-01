@@ -35,4 +35,18 @@ public class CardServiceImpl implements CardService {
     public void deleteCard(UUID id) {
         cardRepository.deleteById(id);
     }
+
+    @Override
+    public CardEntity enableCard(UUID id) {
+        CardEntity card = findById(id);
+        card.setActive(true);
+        return cardRepository.save(card);
+    }
+
+    @Override
+    public CardEntity disableCard(UUID id) {
+        CardEntity card = findById(id);
+        card.setActive(false);
+        return cardRepository.save(card);
+    }
 }

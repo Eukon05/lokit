@@ -14,4 +14,8 @@ public interface CardService {
     UUID saveCard(CardEntity card);
 
     void deleteCard(UUID id);
+
+    CardEntity enableCard(UUID id);
+
+    CardEntity disableCard(UUID id);
 }

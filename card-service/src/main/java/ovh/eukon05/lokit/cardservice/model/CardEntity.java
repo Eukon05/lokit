@@ -22,6 +22,7 @@ public class CardEntity {
     private UserEntity user;
 
     private String name;
+    private boolean active = true;
 
     @CreationTimestamp
     private Instant createdAt;
