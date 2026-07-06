@@ -18,7 +18,13 @@ message GetRoleReply {
   string roleId = 1;
 }
 
+message GetUserRoleReply {
+  string userId = 1;
+  repeated string roleIds = 2;
+}
+
 service RoleService {
   rpc CheckRoleExists(CheckRoleExistsRequest) returns (CheckRoleExistsReply) {}
   rpc ListActiveRoles(google.protobuf.Empty) returns (stream GetRoleReply) {}
+  rpc ListUserRoles(google.protobuf.Empty) returns (stream GetUserRoleReply) {}
 }

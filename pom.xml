@@ -15,6 +15,7 @@
         <module>room-service</module>
         <module>card-service</module>
         <module>device-service</module>
+        <module>decision-service</module>
     </modules>
 
     <properties>

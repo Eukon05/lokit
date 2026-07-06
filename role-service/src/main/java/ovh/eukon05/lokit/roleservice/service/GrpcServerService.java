@@ -4,12 +4,11 @@ import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.grpc.server.service.GrpcService;
-import ovh.eukon05.lokit.common.proto.CheckRoleExistsReply;
-import ovh.eukon05.lokit.common.proto.CheckRoleExistsRequest;
-import ovh.eukon05.lokit.common.proto.GetRoleReply;
-import ovh.eukon05.lokit.common.proto.RoleServiceGrpc;
+import ovh.eukon05.lokit.common.proto.*;
 import ovh.eukon05.lokit.roleservice.model.RoleEntity;
+import ovh.eukon05.lokit.roleservice.model.UserEntity;
 import ovh.eukon05.lokit.roleservice.repository.RoleRepository;
+import ovh.eukon05.lokit.roleservice.repository.UserRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GrpcServerService extends RoleServiceGrpc.RoleServiceImplBase {
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void checkRoleExists(CheckRoleExistsRequest request, StreamObserver<CheckRoleExistsReply> responseObserver) {
@@ -38,6 +38,22 @@ public class GrpcServerService extends RoleServiceGrpc.RoleServiceImplBase {
             GetRoleReply reply = GetRoleReply.newBuilder()
                     .setRoleId(role.getId().toString())
                     .build();
+            responseObserver.onNext(reply);
+        }
+
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void listUserRoles(Empty request, StreamObserver<GetUserRoleReply> responseObserver) {
+        List<UserEntity> users = userRepository.findAll();
+
+        for (UserEntity user : users) {
+            GetUserRoleReply reply = GetUserRoleReply.newBuilder()
+                    .setUserId(user.getId().toString())
+                    .addAllRoleIds(user.getRoles().stream().map(r -> r.getId().toString()).toList())
+                    .build();
+
             responseObserver.onNext(reply);
         }
 
