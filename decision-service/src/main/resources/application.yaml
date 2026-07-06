@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: decision-service
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  rabbitmq:
+    username: user
+    password: password
+    host: localhost
+    port: 5672
+
+  grpc:
+    client:
+      channel:
+        role-service:
+          target: 0.0.0.0:9090
+        room-service:
+          target: 0.0.0.0:9091
+        card-service:
+          target: 0.0.0.0:9092
+        device-service:
+          target: 0.0.0.0:9093
+
+server:
+  port: 8084
