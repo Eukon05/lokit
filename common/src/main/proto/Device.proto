@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "ovh.eukon05.lokit.common.proto";
+option java_outer_classname = "DeviceServiceProto";
+
+message GetDeviceReply {
+  string deviceId = 1;
+  string roomId = 2;
+}
+
+service DeviceService {
+  rpc ListActiveDevices(google.protobuf.Empty) returns (stream GetDeviceReply) {}
+}

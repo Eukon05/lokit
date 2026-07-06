@@ -11,6 +11,15 @@ message GetRoomReply {
   repeated string roleIds = 2;
 }
 
+message CheckRoomExistsRequest {
+  string roomId = 1;
+}
+
+message CheckRoomExistsReply {
+  bool exists = 1;
+}
+
 service RoomService {
+  rpc CheckRoomExists(CheckRoomExistsRequest) returns (CheckRoomExistsReply) {}
   rpc ListActiveRooms(google.protobuf.Empty) returns (stream GetRoomReply) {}
 }
