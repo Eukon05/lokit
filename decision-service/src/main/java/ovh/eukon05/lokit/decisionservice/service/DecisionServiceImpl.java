@@ -1,18 +1,30 @@
 package ovh.eukon05.lokit.decisionservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import ovh.eukon05.lokit.decisionservice.cache.DecisionCache;
+import ovh.eukon05.lokit.decisionservice.model.DecisionStatus;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class DecisionServiceImpl implements DecisionService {
-    private final RedisTemplate<String, String> redisTemplate;
+    private final DecisionCache decisionCache;
 
     @Override
-    public boolean getDecision(UUID cardId, UUID deviceId) {
-        return false;
+    public DecisionStatus getDecision(UUID cardId, UUID deviceId) {
+        if (!decisionCache.isCardActive(cardId))
+            return DecisionStatus.CARD_DISABLED;
+
+        if (!decisionCache.isDeviceActive(deviceId))
+            return DecisionStatus.DEVICE_DISABLED;
+
+        UUID roomId = decisionCache.getDeviceRoomMapping(deviceId);
+        if (!decisionCache.isRoomActive(roomId))
+            return DecisionStatus.ROOM_DISABLED;
+
+        UUID userId = decisionCache.getCardUserMapping(cardId);
+        return decisionCache.isEntryPermitted(userId, roomId) ? DecisionStatus.OK : DecisionStatus.INSUFFICIENT_ROLE;
     }
 }

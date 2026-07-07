@@ -1,0 +1,58 @@
+package ovh.eukon05.lokit.decisionservice.cache;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.UUID;
+
+import static ovh.eukon05.lokit.decisionservice.cache.RedisCacheKeys.*;
+
+@Component
+@RequiredArgsConstructor
+class DecisionCacheImpl implements DecisionCache {
+    private final StringRedisTemplate redis;
+
+    @Override
+    public boolean isDeviceActive(UUID deviceId) {
+        return redis.opsForSet().isMember(REDIS_ACTIVE_DEVICES_KEY, deviceId.toString());
+    }
+
+    @Override
+    public boolean isRoomActive(UUID roomId) {
+        return redis.opsForSet().isMember(REDIS_ACTIVE_ROOMS_KEY, roomId.toString());
+    }
+
+    @Override
+    public boolean isCardActive(UUID cardId) {
+        return redis.opsForSet().isMember(REDIS_ACTIVE_CARDS_KEY, cardId.toString());
+    }
+
+    @Override
+    public UUID getCardUserMapping(UUID cardId) {
+        String key = REDIS_CARD_USER_MAPPING_KEY.formatted(cardId);
+        String user = redis.opsForValue().get(key);
+        if (user == null) throw new IllegalArgumentException("placeholder");
+        return UUID.fromString(user);
+    }
+
+    @Override
+    public UUID getDeviceRoomMapping(UUID deviceId) {
+        String key = REDIS_DEVICE_ROOM_MAPPING_KEY.formatted(deviceId);
+        String room = redis.opsForValue().get(key);
+        if (room == null) throw new IllegalArgumentException("placeholder");
+        return UUID.fromString(room);
+    }
+
+    @Override
+    public boolean isEntryPermitted(UUID userId, UUID roomId) {
+        String roomRolesKey = REDIS_ROOM_ROLES_SET_KEY.formatted(roomId);
+        String userRolesKey = REDIS_USER_ROLES_SET_KEY.formatted(userId);
+
+        Set<String> allowedRoles = redis.opsForSet()
+                .intersect(userRolesKey, Set.of(roomRolesKey, REDIS_ACTIVE_ROLES_KEY));
+
+        return allowedRoles != null && !allowedRoles.isEmpty();
+    }
+}
