@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.RoomDisabledEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoomEnabledEventDTO;
+import ovh.eukon05.lokit.common.dto.event.*;
 import ovh.eukon05.lokit.roomservice.client.EventClient;
 import ovh.eukon05.lokit.roomservice.dto.request.CreateRoomDTO;
 import ovh.eukon05.lokit.roomservice.dto.response.GetRoomDTO;
@@ -30,7 +29,9 @@ public class RoomFacade {
 
     public UUID createRoom(CreateRoomDTO roomDTO) {
         RoomEntity entity = roomMapper.fromCreateRoomDTO(roomDTO);
-        return roomService.saveRoom(entity);
+        UUID id = roomService.saveRoom(entity);
+        eventClient.sendRoomCreatedEvent(new RoomCreatedEventDTO(Instant.now(), id));
+        return id;
     }
 
     public PagedModel<GetRoomDTO> findAll(Pageable pageable) {
@@ -39,10 +40,12 @@ public class RoomFacade {
 
     public void addToRoomACL(UUID roomId, UUID roleId) {
         roomService.addToRoomACL(roomId, roleId);
+        eventClient.sendRoleAddedToACLEvent(new RoomRoleAddedEventDTO(Instant.now(), roomId, roleId));
     }
 
     public void removeFromRoomACL(UUID roomId, UUID roleId) {
         roomService.removeFromRoomACL(roomId, roleId);
+        eventClient.sendRoleRemovedFromACLEvent(new RoomRoleRemovedEventDTO(Instant.now(), roomId, roleId));
     }
 
     public GetRoomDTO enableRoom(UUID id) {

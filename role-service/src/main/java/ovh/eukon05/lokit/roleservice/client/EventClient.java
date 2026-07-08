@@ -1,13 +1,17 @@
 package ovh.eukon05.lokit.roleservice.client;
 
-import ovh.eukon05.lokit.common.dto.event.RoleDeletedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoleDisabledEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoleEnabledEventDTO;
+import ovh.eukon05.lokit.common.dto.event.*;
 
 public interface EventClient {
+    void sendRoleCreatedEvent(RoleCreatedEventDTO dto);
+
     void sendRoleDeletedEvent(RoleDeletedEventDTO dto);
 
     void sendRoleEnabledEvent(RoleEnabledEventDTO dto);
 
     void sendRoleDisabledEvent(RoleDisabledEventDTO dto);
+
+    void sendUserRoleAddedEvent(UserRoleAddedEventDTO dto);
+
+    void sendUserRoleRemovedEvent(UserRoleRemovedEventDTO dto);
 }

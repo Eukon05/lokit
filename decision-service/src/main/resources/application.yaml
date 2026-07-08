@@ -27,3 +27,7 @@ spring:
 
 server:
   port: 8084
+
+logging:
+  level:
+    ovh.eukon05.lokit.decisionservice: debug

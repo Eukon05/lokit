@@ -18,6 +18,6 @@ public class RabbitConfig {
 
     @Bean
     public MessageConverter messageConverter() {
-        return new JacksonJsonMessageConverter();
+        return new JacksonJsonMessageConverter("ovh.eukon05.lokit.common.dto.event");
     }
 }

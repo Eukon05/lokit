@@ -3,13 +3,9 @@ package ovh.eukon05.lokit.roomservice.client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.RoleDeletedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoomDisabledEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoomEnabledEventDTO;
-import ovh.eukon05.lokit.roomservice.service.RoomService;
+import ovh.eukon05.lokit.common.dto.event.*;
 
 import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.*;
 
@@ -17,13 +13,21 @@ import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.*;
 @RequiredArgsConstructor
 @Slf4j
 public class EventClientImpl implements EventClient {
-    private final RoomService roomService;
     private final RabbitTemplate rabbitTemplate;
 
     @Override
-    @RabbitListener(queues = ROOM_SERVICE_QUEUE)
-    public void receiveRoleDeletedEvent(RoleDeletedEventDTO event) {
-        roomService.removeFromAllACLs(event.roleId());
+    public void sendRoomCreatedEvent(RoomCreatedEventDTO dto) {
+        sendObject(ROOM_CREATED_ROUTING_KEY, dto);
+    }
+
+    @Override
+    public void sendRoleAddedToACLEvent(RoomRoleAddedEventDTO dto) {
+        sendObject(ROOM_ROLE_ASSIGNED, dto);
+    }
+
+    @Override
+    public void sendRoleRemovedFromACLEvent(RoomRoleRemovedEventDTO dto) {
+        sendObject(ROOM_ROLE_REMOVED, dto);
     }
 
     @Override

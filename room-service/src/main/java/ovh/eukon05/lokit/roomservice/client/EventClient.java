@@ -1,11 +1,13 @@
 package ovh.eukon05.lokit.roomservice.client;
 
-import ovh.eukon05.lokit.common.dto.event.RoleDeletedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoomDisabledEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoomEnabledEventDTO;
+import ovh.eukon05.lokit.common.dto.event.*;
 
 public interface EventClient {
-    void receiveRoleDeletedEvent(RoleDeletedEventDTO event);
+    void sendRoomCreatedEvent(RoomCreatedEventDTO event);
+
+    void sendRoleAddedToACLEvent(RoomRoleAddedEventDTO event);
+
+    void sendRoleRemovedFromACLEvent(RoomRoleRemovedEventDTO event);
 
     void sendRoomEnabledEvent(RoomEnabledEventDTO event);
 

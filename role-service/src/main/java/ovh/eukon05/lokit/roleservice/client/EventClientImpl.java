@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.RoleDeletedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoleDisabledEventDTO;
-import ovh.eukon05.lokit.common.dto.event.RoleEnabledEventDTO;
+import ovh.eukon05.lokit.common.dto.event.*;
 
 import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.*;
 
@@ -16,6 +14,11 @@ import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.*;
 @Slf4j
 public class EventClientImpl implements EventClient {
     private final RabbitTemplate rabbitTemplate;
+
+    @Override
+    public void sendRoleCreatedEvent(RoleCreatedEventDTO dto) {
+        sendObject(ROLE_CREATED_ROUTING_KEY, dto);
+    }
 
     @Override
     public void sendRoleDeletedEvent(RoleDeletedEventDTO dto) {
@@ -30,6 +33,16 @@ public class EventClientImpl implements EventClient {
     @Override
     public void sendRoleDisabledEvent(RoleDisabledEventDTO dto) {
         sendObject(ROLE_DISABLED_ROUTING_KEY, dto);
+    }
+
+    @Override
+    public void sendUserRoleAddedEvent(UserRoleAddedEventDTO dto) {
+        sendObject(USER_ROLE_ASSIGNED_ROUTING_KEY, dto);
+    }
+
+    @Override
+    public void sendUserRoleRemovedEvent(UserRoleRemovedEventDTO dto) {
+        sendObject(USER_ROLE_REMOVED_ROUTING_KEY, dto);
     }
 
     private void sendObject(String routingKey, Object message) {

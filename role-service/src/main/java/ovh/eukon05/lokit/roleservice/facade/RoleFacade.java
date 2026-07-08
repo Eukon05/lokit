@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
+import ovh.eukon05.lokit.common.dto.event.RoleCreatedEventDTO;
 import ovh.eukon05.lokit.common.dto.event.RoleDeletedEventDTO;
 import ovh.eukon05.lokit.common.dto.event.RoleDisabledEventDTO;
 import ovh.eukon05.lokit.common.dto.event.RoleEnabledEventDTO;
@@ -31,7 +32,9 @@ public class RoleFacade {
 
     public UUID createRole(CreateRoleDTO roleDTO) {
         RoleEntity en = roleMapper.fromCreateRoleDTO(roleDTO);
-        return roleService.saveRole(en);
+        UUID id = roleService.saveRole(en);
+        eventClient.sendRoleCreatedEvent(new RoleCreatedEventDTO(Instant.now(), id));
+        return id;
     }
 
     public void deleteRole(UUID id) {

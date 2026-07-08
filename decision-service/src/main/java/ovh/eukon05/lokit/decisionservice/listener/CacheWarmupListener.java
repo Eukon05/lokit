@@ -52,7 +52,7 @@ public class CacheWarmupListener {
         String[] roleIds = roleClient.listActiveRoles().stream().map(UUID::toString).toArray(String[]::new);
 
         log.debug("Saving active roles to Redis...");
-        redis.opsForSet().add(REDIS_ACTIVE_ROLES_KEY, roleIds);
+        addSetMembers(REDIS_ACTIVE_ROLES_KEY, roleIds);
 
         log.debug("Saving active cards to Redis...");
         cards.forEach(card -> redis.opsForSet().add(REDIS_ACTIVE_CARDS_KEY, card.id().toString()));
@@ -76,17 +76,30 @@ public class CacheWarmupListener {
                 .collect(Collectors.toMap(room -> REDIS_ROOM_ROLES_SET_KEY.formatted(room.id()), room -> room.roles().stream().map(UUID::toString).collect(Collectors.toSet())));
 
         log.debug("Saving user-role mappings to Redis...");
-        userMap.forEach((k, v) -> redis.opsForSet().add(k, v.toArray(String[]::new)));
+        userMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
 
         log.debug("Saving room-mappings to Redis...");
-        roomMap.forEach((k, v) -> redis.opsForSet().add(k, v.toArray(String[]::new)));
+        roomMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
 
         log.debug("Saving device-room mappings to Redis...");
-        redis.opsForValue().multiSet(deviceMap);
+        if (!deviceMap.isEmpty()) {
+            redis.opsForValue().multiSet(deviceMap);
+        }
 
         log.debug("Saving card-user mappings to Redis...");
-        redis.opsForValue().multiSet(cardMap);
+        if (!cardMap.isEmpty()) {
+            redis.opsForValue().multiSet(cardMap);
+        }
 
         log.info("Cache warmup complete!");
+    }
+
+    private void addSetMembers(String key, String[] members) {
+        if (members.length == 0) {
+            log.debug("Skipping Redis set {} because there are no members to add", key);
+            return;
+        }
+
+        redis.opsForSet().add(key, members);
     }
 }
