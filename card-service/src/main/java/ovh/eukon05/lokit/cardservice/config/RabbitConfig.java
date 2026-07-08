@@ -6,17 +6,14 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.EXCHANGE_NAME;
+
 @Configuration
 public class RabbitConfig {
-    public static final String CARD_EXCHANGE_NAME = "lokit.events";
-    public static final String CARD_CREATED_ROUTING_KEY = "card.created";
-    public static final String CARD_DELETED_ROUTING_KEY = "card.deleted";
-    public static final String CARD_ENABLED_ROUTING_KEY = "card.enabled";
-    public static final String CARD_DISABLED_ROUTING_KEY = "card.disabled";
 
     @Bean
     public TopicExchange exchange() {
-        return new TopicExchange(CARD_EXCHANGE_NAME);
+        return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean

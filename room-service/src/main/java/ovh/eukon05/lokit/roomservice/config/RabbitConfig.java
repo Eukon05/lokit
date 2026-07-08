@@ -9,17 +9,14 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.*;
+
 @Configuration
 public class RabbitConfig {
-    public static final String ROLES_EXCHANGE_NAME = "lokit.events";
-    public static final String ROLE_DELETED_ROUTING_KEY = "role.deleted";
-    public static final String ROOM_ENABLED_ROUTING_KEY = "room.enabled";
-    public static final String ROOM_DISABLED_ROUTING_KEY = "room.disabled";
-    public static final String ROOM_SERVICE_QUEUE = "lokit.roomservice.queue";
 
     @Bean
     public TopicExchange exchange() {
-        return new TopicExchange(ROLES_EXCHANGE_NAME);
+        return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean
