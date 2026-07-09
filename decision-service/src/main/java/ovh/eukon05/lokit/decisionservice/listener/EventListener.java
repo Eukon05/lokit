@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import ovh.eukon05.lokit.common.dto.event.*;
+import ovh.eukon05.lokit.common.dto.event.dto.*;
 import ovh.eukon05.lokit.decisionservice.cache.DecisionCache;
 
 import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.DECISION_SERVICE_QUEUE;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.*;
+import ovh.eukon05.lokit.common.dto.event.dto.*;
 import ovh.eukon05.lokit.deviceservice.client.EventClient;
 import ovh.eukon05.lokit.deviceservice.client.RoomClient;
 import ovh.eukon05.lokit.deviceservice.dto.request.CreateDeviceDTO;

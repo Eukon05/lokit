@@ -1,6 +1,6 @@
 package ovh.eukon05.lokit.roleservice.client;
 
-import ovh.eukon05.lokit.common.dto.event.*;
+import ovh.eukon05.lokit.common.dto.event.dto.*;
 
 public interface EventClient {
     void sendRoleCreatedEvent(RoleCreatedEventDTO dto);

@@ -2,8 +2,8 @@ package ovh.eukon05.lokit.roleservice.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.UserRoleAddedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.UserRoleRemovedEventDTO;
+import ovh.eukon05.lokit.common.dto.event.dto.UserRoleAddedEventDTO;
+import ovh.eukon05.lokit.common.dto.event.dto.UserRoleRemovedEventDTO;
 import ovh.eukon05.lokit.roleservice.client.EventClient;
 import ovh.eukon05.lokit.roleservice.dto.response.GetUserDTO;
 import ovh.eukon05.lokit.roleservice.mapper.UserMapper;
