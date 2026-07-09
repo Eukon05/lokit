@@ -3,6 +3,8 @@ package ovh.eukon05.lokit.decisionservice.cache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import ovh.eukon05.lokit.decisionservice.exception.CardWithoutUserException;
+import ovh.eukon05.lokit.decisionservice.exception.DeviceWithoutRoomException;
 
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +35,7 @@ class DecisionCacheImpl implements DecisionCache {
     public UUID getCardUserMapping(UUID cardId) {
         String key = REDIS_CARD_USER_MAPPING_KEY.formatted(cardId);
         String user = redis.opsForValue().get(key);
-        if (user == null) throw new IllegalArgumentException("placeholder");
+        if (user == null) throw new CardWithoutUserException(cardId);
         return UUID.fromString(user);
     }
 
@@ -41,7 +43,7 @@ class DecisionCacheImpl implements DecisionCache {
     public UUID getDeviceRoomMapping(UUID deviceId) {
         String key = REDIS_DEVICE_ROOM_MAPPING_KEY.formatted(deviceId);
         String room = redis.opsForValue().get(key);
-        if (room == null) throw new IllegalArgumentException("placeholder");
+        if (room == null) throw new DeviceWithoutRoomException(deviceId);
         return UUID.fromString(room);
     }
 
