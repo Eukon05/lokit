@@ -1,4 +1,4 @@
-package ovh.eukon05.lokit.common.dto.config;
+package ovh.eukon05.lokit.common.config;
 
 public final class RabbitConstants {
     // Exchanged

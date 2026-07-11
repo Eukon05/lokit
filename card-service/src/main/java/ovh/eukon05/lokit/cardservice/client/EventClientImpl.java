@@ -3,13 +3,13 @@ package ovh.eukon05.lokit.cardservice.client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.RabbitEventPublisher;
-import ovh.eukon05.lokit.common.dto.event.dto.CardCreatedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.dto.CardDeletedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.dto.CardDisabledEventDTO;
-import ovh.eukon05.lokit.common.dto.event.dto.CardEnabledEventDTO;
+import ovh.eukon05.lokit.common.event.RabbitEventPublisher;
+import ovh.eukon05.lokit.common.event.dto.CardCreatedEventDTO;
+import ovh.eukon05.lokit.common.event.dto.CardDeletedEventDTO;
+import ovh.eukon05.lokit.common.event.dto.CardDisabledEventDTO;
+import ovh.eukon05.lokit.common.event.dto.CardEnabledEventDTO;
 
-import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.*;
+import static ovh.eukon05.lokit.common.config.RabbitConstants.*;
 
 @Service
 @RequiredArgsConstructor

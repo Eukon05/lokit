@@ -1,4 +1,4 @@
-package ovh.eukon05.lokit.common.dto.event;
+package ovh.eukon05.lokit.common.event;
 
 @FunctionalInterface
 public interface RabbitMessageSender {

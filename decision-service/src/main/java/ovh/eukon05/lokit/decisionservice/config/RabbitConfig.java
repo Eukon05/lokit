@@ -9,8 +9,8 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.DECISION_SERVICE_QUEUE;
-import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.EXCHANGE_NAME;
+import static ovh.eukon05.lokit.common.config.RabbitConstants.DECISION_SERVICE_QUEUE;
+import static ovh.eukon05.lokit.common.config.RabbitConstants.EXCHANGE_NAME;
 
 @Configuration
 public class RabbitConfig {
@@ -51,6 +51,6 @@ public class RabbitConfig {
 
     @Bean
     public MessageConverter messageConverter() {
-        return new JacksonJsonMessageConverter("ovh.eukon05.lokit.common.dto.event");
+        return new JacksonJsonMessageConverter("ovh.eukon05.lokit.common.event.dto");
     }
 }

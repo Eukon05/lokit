@@ -3,10 +3,10 @@ package ovh.eukon05.lokit.roomservice.listener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import ovh.eukon05.lokit.common.dto.event.dto.RoleDeletedEventDTO;
+import ovh.eukon05.lokit.common.event.dto.RoleDeletedEventDTO;
 import ovh.eukon05.lokit.roomservice.service.RoomService;
 
-import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.ROOM_SERVICE_QUEUE;
+import static ovh.eukon05.lokit.common.config.RabbitConstants.ROOM_SERVICE_QUEUE;
 
 @Component
 @RequiredArgsConstructor

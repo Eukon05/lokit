@@ -12,10 +12,10 @@ import ovh.eukon05.lokit.cardservice.model.CardEntity;
 import ovh.eukon05.lokit.cardservice.model.UserEntity;
 import ovh.eukon05.lokit.cardservice.service.CardService;
 import ovh.eukon05.lokit.cardservice.service.UserService;
-import ovh.eukon05.lokit.common.dto.event.dto.CardCreatedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.dto.CardDeletedEventDTO;
-import ovh.eukon05.lokit.common.dto.event.dto.CardDisabledEventDTO;
-import ovh.eukon05.lokit.common.dto.event.dto.CardEnabledEventDTO;
+import ovh.eukon05.lokit.common.event.dto.CardCreatedEventDTO;
+import ovh.eukon05.lokit.common.event.dto.CardDeletedEventDTO;
+import ovh.eukon05.lokit.common.event.dto.CardDisabledEventDTO;
+import ovh.eukon05.lokit.common.event.dto.CardEnabledEventDTO;
 
 import java.time.Instant;
 import java.util.UUID;

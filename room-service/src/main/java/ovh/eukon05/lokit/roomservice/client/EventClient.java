@@ -1,6 +1,6 @@
 package ovh.eukon05.lokit.roomservice.client;
 
-import ovh.eukon05.lokit.common.dto.event.dto.*;
+import ovh.eukon05.lokit.common.event.dto.*;
 
 public interface EventClient {
     void sendRoomCreatedEvent(RoomCreatedEventDTO event);

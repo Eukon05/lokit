@@ -1,4 +1,4 @@
-package ovh.eukon05.lokit.common.dto.event.dto;
+package ovh.eukon05.lokit.common.event.dto;
 
 import java.time.Instant;
 import java.util.UUID;

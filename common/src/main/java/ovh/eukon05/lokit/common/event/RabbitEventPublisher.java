@@ -1,9 +1,9 @@
-package ovh.eukon05.lokit.common.dto.event;
+package ovh.eukon05.lokit.common.event;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.EXCHANGE_NAME;
+import static ovh.eukon05.lokit.common.config.RabbitConstants.EXCHANGE_NAME;
 
 public class RabbitEventPublisher {
     private final RabbitMessageSender sender;
