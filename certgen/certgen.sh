@@ -1,3 +1,4 @@
+# https://ziohttp.com/guides/implementing-mutual-tls/
 echo -e '==== LOKIT CERT GEN TOOL ====\n'
 
 ./scripts/generate-ca.sh
