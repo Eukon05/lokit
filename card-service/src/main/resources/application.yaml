@@ -23,6 +23,21 @@ spring:
   grpc:
     server:
       port: 9092
+      ssl:
+        enabled: true
+        client-auth: require
+        bundle: lokit-card-server-ssl
+
+  ssl:
+    bundle:
+      jks:
+        lokit-card-server-ssl:
+          keystore.location: classpath:card-server-keystore.p12
+          keystore.password: changeit
+          keystore.type: PKCS12
+          truststore.location: classpath:card-server-truststore.p12
+          truststore.password: changeit
+          truststore.type: PKCS12
 
 server:
   port: 8082
