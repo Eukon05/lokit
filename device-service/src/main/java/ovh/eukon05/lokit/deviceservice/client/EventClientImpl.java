@@ -3,10 +3,10 @@ package ovh.eukon05.lokit.deviceservice.client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.common.dto.event.RabbitEventPublisher;
-import ovh.eukon05.lokit.common.dto.event.dto.*;
+import ovh.eukon05.lokit.common.event.RabbitEventPublisher;
+import ovh.eukon05.lokit.common.event.dto.*;
 
-import static ovh.eukon05.lokit.common.dto.config.RabbitConstants.*;
+import static ovh.eukon05.lokit.common.config.RabbitConstants.*;
 
 @Service
 @RequiredArgsConstructor

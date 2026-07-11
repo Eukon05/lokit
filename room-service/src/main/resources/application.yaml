@@ -18,9 +18,34 @@ spring:
     client:
       channel:
         role-service:
-          target: 0.0.0.0:9090
+          target: static://localhost:9090
+          ssl:
+            enabled: true
+            bundle: lokit-room-client-ssl
     server:
       port: 9091
+      ssl:
+        enabled: true
+        client-auth: require
+        bundle: lokit-room-server-ssl
+
+  ssl:
+    bundle:
+      jks:
+        lokit-room-server-ssl:
+          keystore.location: classpath:room-server-keystore.p12
+          keystore.password: changeit
+          keystore.type: PKCS12
+          truststore.location: classpath:room-server-truststore.p12
+          truststore.password: changeit
+          truststore.type: PKCS12
+        lokit-room-client-ssl:
+          keystore.location: classpath:room-client-keystore.p12
+          keystore.password: changeit
+          keystore.type: PKCS12
+          truststore.location: classpath:room-client-truststore.p12
+          truststore.password: changeit
+          truststore.type: PKCS12
 
   rabbitmq:
     username: user

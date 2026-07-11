@@ -17,13 +17,36 @@ spring:
     client:
       channel:
         role-service:
-          target: 0.0.0.0:9090
+          target: static://localhost:9090
+          ssl:
+            enabled: true
+            bundle: lokit-decision-client-ssl
         room-service:
-          target: 0.0.0.0:9091
+          target: static://localhost:9091
+          ssl:
+            enabled: true
+            bundle: lokit-decision-client-ssl
         card-service:
-          target: 0.0.0.0:9092
+          target: static://localhost:9092
+          ssl:
+            enabled: true
+            bundle: lokit-decision-client-ssl
         device-service:
-          target: 0.0.0.0:9093
+          target: static://localhost:9093
+          ssl:
+            enabled: true
+            bundle: lokit-decision-client-ssl
+
+  ssl:
+    bundle:
+      jks:
+        lokit-decision-client-ssl:
+          keystore.location: classpath:decision-client-keystore.p12
+          keystore.password: changeit
+          keystore.type: PKCS12
+          truststore.location: classpath:decision-client-truststore.p12
+          truststore.password: changeit
+          truststore.type: PKCS12
 
 server:
   port: 8084

@@ -38,3 +38,9 @@ build/
 ### Mac OS ###
 .DS_Store
 /.idea/
+
+### certgen output ###
+/certgen/output/
+
+## certs ###
+/*-service/src/main/resources/*.p12
