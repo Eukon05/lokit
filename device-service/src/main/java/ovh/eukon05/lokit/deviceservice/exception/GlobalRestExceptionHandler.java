@@ -32,6 +32,13 @@ public class GlobalRestExceptionHandler {
         return ResponseEntity.status(status).body(errorDTO);
     }
 
+    @ExceptionHandler(DeviceAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorDTO> handleDeviceAlreadyExistsException(DeviceAlreadyExistsException exception, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        ApiErrorDTO errorDTO = buildErrorResponse(request, status, exception.getMessage(), Collections.emptyMap());
+        return ResponseEntity.status(status).body(errorDTO);
+    }
+
     @ExceptionHandler(RoomNotFoundException.class)
     public ResponseEntity<ApiErrorDTO> handleRoomNotFound(RoomNotFoundException exception, HttpServletRequest request) {
         ApiErrorDTO errorDTO = buildErrorResponse(request, HttpStatus.NOT_FOUND, exception.getMessage(), Collections.emptyMap());

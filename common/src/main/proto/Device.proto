@@ -9,6 +9,7 @@ option java_outer_classname = "DeviceServiceProto";
 message GetDeviceReply {
   string deviceId = 1;
   string roomId = 2;
+  string tokenHash = 3;
 }
 
 service DeviceService {

@@ -18,12 +18,13 @@ public class GrpcServerService extends DeviceServiceGrpc.DeviceServiceImplBase {
 
     @Override
     public void listActiveDevices(Empty request, StreamObserver<GetDeviceReply> responseObserver) {
-        List<DeviceEntity> devices = deviceRepository.findAllByActiveTrueAndRoomIdIsNotNull();
+        List<DeviceEntity> devices = deviceRepository.findAllByTokenHashIsNotNull();
 
         for (DeviceEntity device : devices) {
             GetDeviceReply reply = GetDeviceReply.newBuilder()
                     .setDeviceId(device.getId().toString())
-                    .setRoomId(device.getRoomId().toString())
+                    .setRoomId(device.getRoomId() == null ? "" : device.getRoomId().toString())
+                    .setTokenHash(device.getTokenHash())
                     .build();
             responseObserver.onNext(reply);
         }

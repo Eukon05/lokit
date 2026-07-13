@@ -22,7 +22,11 @@ public class DeviceServiceClientImpl implements DeviceServiceClient {
         Iterator<GetDeviceReply> deviceIter = stub.listActiveDevices(Empty.getDefaultInstance());
         List<DeviceState> devices = new ArrayList<>();
 
-        deviceIter.forEachRemaining(item -> devices.add(new DeviceState(UUID.fromString(item.getDeviceId()), UUID.fromString(item.getRoomId()))));
+        deviceIter.forEachRemaining(item -> devices.add(new DeviceState(
+                UUID.fromString(item.getDeviceId()),
+                item.getRoomId().isBlank() ? null : UUID.fromString(item.getRoomId()),
+                item.getTokenHash()
+        )));
         return devices;
     }
 }

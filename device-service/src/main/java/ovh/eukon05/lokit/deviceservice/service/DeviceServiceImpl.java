@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.deviceservice.exception.DeviceNotFoundException;
+import ovh.eukon05.lokit.deviceservice.helper.DeviceTokenHelper;
 import ovh.eukon05.lokit.deviceservice.model.DeviceEntity;
 import ovh.eukon05.lokit.deviceservice.repository.DeviceRepository;
 
@@ -18,6 +19,11 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public DeviceEntity findById(UUID deviceId) {
         return deviceRepository.findById(deviceId).orElseThrow(DeviceNotFoundException::new);
+    }
+
+    @Override
+    public boolean existsByPhysicalAddress(String physicalAddress) {
+        return deviceRepository.existsByPhysicalAddress(physicalAddress);
     }
 
     @Override
@@ -46,17 +52,20 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public DeviceEntity enableDevice(UUID deviceId) {
+    public String assignToken(UUID deviceId) {
         DeviceEntity device = findById(deviceId);
-        device.setActive(true);
-        return deviceRepository.save(device);
+        String token = DeviceTokenHelper.generateRandomString(32);
+        device.setTokenHash(DeviceTokenHelper.generateHash(token));
+
+        deviceRepository.save(device);
+        return token;
     }
 
     @Override
-    public DeviceEntity disableDevice(UUID deviceId) {
+    public void revokeToken(UUID deviceId) {
         DeviceEntity device = findById(deviceId);
-        device.setActive(false);
-        return deviceRepository.save(device);
+        device.setTokenHash(null);
+        deviceRepository.save(device);
     }
 
     @Override

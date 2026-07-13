@@ -7,9 +7,9 @@ public interface EventClient {
 
     void sendDeviceDeletedEvent(DeviceDeletedEventDTO dto);
 
-    void sendDeviceEnabledEvent(DeviceEnabledEventDTO dto);
+    void sendDeviceTokenAssignedEvent(DeviceTokenAssignedEventDTO dto);
 
-    void sendDeviceDisabledEvent(DeviceDisabledEventDTO dto);
+    void sendDeviceTokenRevokedEvent(DeviceTokenRevokedEventDTO dto);
 
     void sendDeviceRoomAssignedEvent(DeviceRoomAssignedEventDTO dto);
 

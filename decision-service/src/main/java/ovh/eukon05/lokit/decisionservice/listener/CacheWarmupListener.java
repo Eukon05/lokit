@@ -60,11 +60,17 @@ public class CacheWarmupListener {
         log.debug("Saving active rooms to Redis...");
         rooms.forEach(room -> redis.opsForSet().add(REDIS_ACTIVE_ROOMS_KEY, room.id().toString()));
 
-        log.debug("Saving active devices to Redis...");
-        devices.forEach(device -> redis.opsForSet().add(REDIS_ACTIVE_DEVICES_KEY, device.id().toString()));
-
         Map<String, String> deviceMap = devices.stream()
+                .filter(dev -> dev.roomId() != null)
                 .collect(Collectors.toMap(dev -> REDIS_DEVICE_ROOM_MAPPING_KEY.formatted(dev.id()), dev -> dev.roomId().toString()));
+
+        Map<String, String> deviceTokenMap = devices.stream()
+                .filter(dev -> dev.tokenHash() != null && !dev.tokenHash().isBlank())
+                .collect(Collectors.toMap(dev -> REDIS_DEVICE_TOKEN_HASH_MAPPING_KEY.formatted(dev.id()), DeviceState::tokenHash));
+
+        Map<String, String> tokenDeviceMap = devices.stream()
+                .filter(dev -> dev.tokenHash() != null && !dev.tokenHash().isBlank())
+                .collect(Collectors.toMap(dev -> REDIS_TOKEN_HASH_DEVICE_MAPPING_KEY.formatted(dev.tokenHash()), dev -> dev.id().toString()));
 
         Map<String, String> cardMap = cards.stream()
                 .collect(Collectors.toMap(card -> REDIS_CARD_USER_MAPPING_KEY.formatted(card.id()), card -> card.userId().toString()));
@@ -84,6 +90,14 @@ public class CacheWarmupListener {
         log.debug("Saving device-room mappings to Redis...");
         if (!deviceMap.isEmpty()) {
             redis.opsForValue().multiSet(deviceMap);
+        }
+
+        log.debug("Saving device-token mappings to Redis...");
+        if (!deviceTokenMap.isEmpty()) {
+            redis.opsForValue().multiSet(deviceTokenMap);
+        }
+        if (!tokenDeviceMap.isEmpty()) {
+            redis.opsForValue().multiSet(tokenDeviceMap);
         }
 
         log.debug("Saving card-user mappings to Redis...");

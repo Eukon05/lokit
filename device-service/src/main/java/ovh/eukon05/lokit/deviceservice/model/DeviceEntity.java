@@ -1,6 +1,7 @@
 package ovh.eukon05.lokit.deviceservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,10 +16,15 @@ public class DeviceEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String description;
+
+    @NotBlank
     private String physicalAddress;
 
     private UUID roomId;
-    private boolean active = true;
+    private String tokenHash;
 }

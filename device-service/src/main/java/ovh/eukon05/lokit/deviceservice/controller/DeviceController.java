@@ -47,13 +47,13 @@ public class DeviceController {
         return deviceFacade.removeRoom(deviceId);
     }
 
-    @PostMapping("/{deviceId}/enable")
-    public void enableDevice(@PathVariable UUID deviceId) {
-        deviceFacade.enableDevice(deviceId);
+    @PostMapping("/{deviceId}/token")
+    public String assignToken(@PathVariable UUID deviceId) {
+        return deviceFacade.assignToken(deviceId);
     }
 
-    @PostMapping("/{deviceId}/disable")
-    public void disableDevice(@PathVariable UUID deviceId) {
-        deviceFacade.disableDevice(deviceId);
+    @DeleteMapping("/{deviceId}/token")
+    public void revokeToken(@PathVariable UUID deviceId) {
+        deviceFacade.revokeToken(deviceId);
     }
 }

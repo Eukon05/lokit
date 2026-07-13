@@ -25,13 +25,13 @@ public class EventClientImpl implements EventClient {
     }
 
     @Override
-    public void sendDeviceEnabledEvent(DeviceEnabledEventDTO dto) {
-        publisher.sendObject(DEVICE_ENABLED_ROUTING_KEY, dto);
+    public void sendDeviceTokenAssignedEvent(DeviceTokenAssignedEventDTO dto) {
+        publisher.sendObject(DEVICE_TOKEN_ASSIGNED_ROUTING_KEY, dto);
     }
 
     @Override
-    public void sendDeviceDisabledEvent(DeviceDisabledEventDTO dto) {
-        publisher.sendObject(DEVICE_DISABLED_ROUTING_KEY, dto);
+    public void sendDeviceTokenRevokedEvent(DeviceTokenRevokedEventDTO dto) {
+        publisher.sendObject(DEVICE_TOKEN_REVOKED_ROUTING_KEY, dto);
     }
 
     @Override

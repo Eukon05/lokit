@@ -1,6 +1,8 @@
 package ovh.eukon05.lokit.common.config;
 
 public final class RabbitConstants {
+    private RabbitConstants() {
+    }
     // Exchanged
     public static final String EXCHANGE_NAME = "lokit.events";
 
@@ -26,8 +28,8 @@ public final class RabbitConstants {
 
     public static final String DEVICE_CREATED_ROUTING_KEY = "device.created";
     public static final String DEVICE_DELETED_ROUTING_KEY = "device.deleted";
-    public static final String DEVICE_ENABLED_ROUTING_KEY = "device.enabled";
-    public static final String DEVICE_DISABLED_ROUTING_KEY = "device.disabled";
+    public static final String DEVICE_TOKEN_ASSIGNED_ROUTING_KEY = "device.token.assigned";
+    public static final String DEVICE_TOKEN_REVOKED_ROUTING_KEY = "device.token.revoked";
     public static final String DEVICE_ROOM_ASSIGNED_ROUTING_KEY = "device.room.assigned";
     public static final String DEVICE_ROOM_REMOVED_ROUTING_KEY = "device.room.removed";
 
