@@ -39,5 +39,17 @@ spring:
           truststore.password: changeit
           truststore.type: PKCS12
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/lokit
+          jwk-set-uri: http://localhost:8090/realms/lokit/protocol/openid-connect/certs
+
 server:
   port: 8080
+
+lokit:
+  jwt:
+    role-claims:
+      - realm_access.roles

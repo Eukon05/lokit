@@ -11,7 +11,7 @@ import ovh.eukon05.lokit.common.event.RabbitEventPublisher;
 import static ovh.eukon05.lokit.common.config.RabbitConstants.EXCHANGE_NAME;
 
 @Configuration
-public class RabbitConfig {
+class RabbitConfig {
 
     @Bean
     public TopicExchange exchange() {
