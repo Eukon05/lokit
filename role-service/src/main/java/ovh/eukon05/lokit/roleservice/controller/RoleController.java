@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/role")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('LOKIT_ADMIN')")
 public class RoleController {
     private final RoleFacade roleFacade;
 

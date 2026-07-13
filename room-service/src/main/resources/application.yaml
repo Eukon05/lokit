@@ -53,5 +53,12 @@ spring:
     host: localhost
     port: 5672
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/lokit
+          jwk-set-uri: http://localhost:8090/realms/lokit/protocol/openid-connect/certs
+
 server:
   port: 8081
