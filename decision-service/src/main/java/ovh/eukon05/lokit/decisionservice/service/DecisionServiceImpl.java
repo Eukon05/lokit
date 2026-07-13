@@ -3,6 +3,7 @@ package ovh.eukon05.lokit.decisionservice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.decisionservice.cache.DecisionCache;
+import ovh.eukon05.lokit.decisionservice.exception.DeviceWithoutRoomException;
 import ovh.eukon05.lokit.decisionservice.model.DecisionStatus;
 
 import java.util.UUID;
@@ -17,10 +18,13 @@ public class DecisionServiceImpl implements DecisionService {
         if (!decisionCache.isCardActive(cardId))
             return DecisionStatus.CARD_DISABLED;
 
-        if (!decisionCache.isDeviceActive(deviceId))
-            return DecisionStatus.DEVICE_DISABLED;
+        UUID roomId;
+        try {
+            roomId = decisionCache.getDeviceRoomMapping(deviceId);
+        } catch (DeviceWithoutRoomException e) {
+            return DecisionStatus.DEVICE_NOT_ASSIGNED;
+        }
 
-        UUID roomId = decisionCache.getDeviceRoomMapping(deviceId);
         if (!decisionCache.isRoomActive(roomId))
             return DecisionStatus.ROOM_DISABLED;
 

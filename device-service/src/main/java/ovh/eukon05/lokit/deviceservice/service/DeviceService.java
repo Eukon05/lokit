@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface DeviceService {
     DeviceEntity findById(UUID deviceId);
 
+    boolean existsByPhysicalAddress(String physicalAddress);
+
     UUID saveDevice(DeviceEntity device);
 
     void deleteDevice(UUID deviceId);
@@ -17,9 +19,9 @@ public interface DeviceService {
 
     DeviceEntity removeRoom(UUID deviceId);
 
-    DeviceEntity enableDevice(UUID deviceId);
+    String assignToken(UUID deviceId);
 
-    DeviceEntity disableDevice(UUID deviceId);
+    void revokeToken(UUID deviceId);
 
     Page<DeviceEntity> findAll(Pageable pageable);
 }

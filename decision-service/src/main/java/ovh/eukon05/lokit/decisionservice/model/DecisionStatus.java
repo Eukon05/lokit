@@ -7,5 +7,5 @@ public enum DecisionStatus {
     CARD_DISABLED,
     ROOM_NOT_FOUND,
     ROOM_DISABLED,
-    DEVICE_DISABLED
+    DEVICE_NOT_ASSIGNED
 }

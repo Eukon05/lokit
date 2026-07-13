@@ -99,45 +99,33 @@ public class EventListener {
     }
 
     @RabbitHandler
-    public void receiveDeviceCreatedEvent(DeviceCreatedEventDTO dto) {
-        log.debug("Received device created event. Adding active device {} mapped to room {}", dto.deviceId(), dto.roomId());
-        decisionCache.addActiveDevice(dto.deviceId());
-        decisionCache.setDeviceRoom(dto.roomId(), dto.deviceId());
-    }
-
-    @RabbitHandler
     public void receiveDeviceDeletedEvent(DeviceDeletedEventDTO dto) {
-        log.debug("Received device deleted event. Removing active device {} and its room mapping", dto.deviceId());
-        decisionCache.removeActiveDevice(dto.deviceId());
+        log.debug("Received device deleted event. Removing device {} room mapping and token", dto.deviceId());
         decisionCache.removeDeviceRoom(dto.deviceId());
+        decisionCache.removeToken(dto.deviceId());
     }
 
     @RabbitHandler
-    public void receiveDeviceEnabledEvent(DeviceEnabledEventDTO dto) {
-        log.debug("Received device enabled event. Adding active device {} mapped to room {}", dto.deviceId(), dto.roomId());
-        decisionCache.addActiveDevice(dto.deviceId());
-        decisionCache.setDeviceRoom(dto.roomId(), dto.deviceId());
+    public void receiveDeviceTokenAssignedEvent(DeviceTokenAssignedEventDTO dto) {
+        log.debug("Received device token assigned event. Adding token hash {} mapped to device {}", dto.tokenHash(), dto.deviceId());
+        decisionCache.addToken(dto.tokenHash(), dto.deviceId());
     }
 
     @RabbitHandler
-    public void receiveDeviceDisabledEvent(DeviceDisabledEventDTO dto) {
-        log.debug("Received device disabled event. Removing active device {}", dto.deviceId());
-        decisionCache.removeActiveDevice(dto.deviceId());
+    public void receiveDeviceTokenRevokedEvent(DeviceTokenRevokedEventDTO dto) {
+        log.debug("Received device token revoked event. Removing token mapped to device {}", dto.deviceId());
+        decisionCache.removeToken(dto.deviceId());
     }
 
     @RabbitHandler
     public void receiveDeviceRoomAssignedEvent(DeviceRoomAssignedEventDTO dto) {
-        log.debug("Received device room assigned event. Mapping device {} to room {}. Active: {}", dto.deviceId(), dto.roomId(), dto.active());
+        log.debug("Received device room assigned event. Mapping device {} to room {}", dto.deviceId(), dto.roomId());
         decisionCache.setDeviceRoom(dto.roomId(), dto.deviceId());
-        if (dto.active()) {
-            decisionCache.addActiveDevice(dto.deviceId());
-        }
     }
 
     @RabbitHandler
     public void receiveDeviceRoomRemovedEvent(DeviceRoomRemovedEventDTO dto) {
-        log.debug("Received device room removed event. Removing active device {} and its room mapping", dto.deviceId());
-        decisionCache.removeActiveDevice(dto.deviceId());
+        log.debug("Received device room removed event. Removing device {} room mapping", dto.deviceId());
         decisionCache.removeDeviceRoom(dto.deviceId());
     }
 

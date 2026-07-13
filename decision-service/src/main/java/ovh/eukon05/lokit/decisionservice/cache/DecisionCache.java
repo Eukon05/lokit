@@ -3,8 +3,6 @@ package ovh.eukon05.lokit.decisionservice.cache;
 import java.util.UUID;
 
 public interface DecisionCache {
-    boolean isDeviceActive(UUID deviceId);
-
     boolean isRoomActive(UUID roomId);
 
     boolean isCardActive(UUID cardId);
@@ -12,6 +10,8 @@ public interface DecisionCache {
     UUID getCardUserMapping(UUID cardId);
 
     UUID getDeviceRoomMapping(UUID deviceId);
+
+    UUID getTokenDeviceMapping(String token);
 
     boolean isEntryPermitted(UUID userId, UUID roomId);
 
@@ -26,10 +26,6 @@ public interface DecisionCache {
     void addActiveRoom(UUID roomId);
 
     void removeActiveRoom(UUID roomId);
-
-    void addActiveDevice(UUID deviceId);
-
-    void removeActiveDevice(UUID deviceId);
 
     void addRoleToACL(UUID roleId, UUID roomId);
 
@@ -46,4 +42,8 @@ public interface DecisionCache {
     void addRoleToUser(UUID roleId, UUID userId);
 
     void removeRoleFromUser(UUID roleId, UUID userId);
+
+    void addToken(String tokenHash, UUID deviceId);
+
+    void removeToken(UUID deviceId);
 }
