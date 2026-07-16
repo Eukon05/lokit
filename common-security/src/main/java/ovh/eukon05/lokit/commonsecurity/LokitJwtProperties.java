@@ -5,5 +5,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "lokit.jwt")
-record LokitJwtProperties(List<String> roleClaims) {
+public record LokitJwtProperties(List<String> roleClaims) {
 }
