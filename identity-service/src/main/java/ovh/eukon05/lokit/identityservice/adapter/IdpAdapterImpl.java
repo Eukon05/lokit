@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class IdpAdapterImpl implements IdpAdapter {
+class IdpAdapterImpl implements IdpAdapter {
     @Value("${lokit.keycloak.realm}")
     private String keycloakRealm;
     private final Keycloak keycloak;

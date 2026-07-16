@@ -16,16 +16,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalRestExceptionHandler {
+class GlobalRestExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiErrorDTO> handleUserNotFound(UserNotFoundException exception, HttpServletRequest request) {
+    ResponseEntity<ApiErrorDTO> handleUserNotFound(UserNotFoundException exception, HttpServletRequest request) {
         ApiErrorDTO errorDTO = buildErrorResponse(request, HttpStatus.NOT_FOUND, exception.getMessage(), Collections.emptyMap());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDTO);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, HttpServletRequest request) {
+    ResponseEntity<ApiErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
 
         for (FieldError error : exception.getBindingResult().getFieldErrors())
@@ -36,7 +36,7 @@ public class GlobalRestExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiErrorDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
+    ResponseEntity<ApiErrorDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         errors.put(exception.getName(), exception.getMostSpecificCause().getMessage());
 

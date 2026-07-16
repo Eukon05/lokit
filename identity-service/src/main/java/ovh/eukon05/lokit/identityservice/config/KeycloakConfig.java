@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(KeycloakProperties.class)
 @RequiredArgsConstructor
-public class KeycloakConfig {
+class KeycloakConfig {
     private final KeycloakProperties properties;
 
     @Bean

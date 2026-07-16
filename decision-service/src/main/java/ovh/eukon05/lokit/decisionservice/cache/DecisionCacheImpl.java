@@ -115,11 +115,15 @@ class DecisionCacheImpl implements DecisionCache {
     @Override
     public void setCardUser(UUID cardId, UUID userId) {
         redis.opsForValue().set(REDIS_CARD_USER_MAPPING_KEY.formatted(cardId), userId.toString());
+        redis.opsForSet().add(REDIS_USER_CARDS_SET_KEY.formatted(userId), cardId.toString());
     }
 
     @Override
     public void removeCardUser(UUID cardId) {
-        redis.opsForValue().getAndDelete(REDIS_CARD_USER_MAPPING_KEY.formatted(cardId));
+        String userId = redis.opsForValue().getAndDelete(REDIS_CARD_USER_MAPPING_KEY.formatted(cardId));
+        if (userId != null) {
+            redis.opsForSet().remove(REDIS_USER_CARDS_SET_KEY.formatted(userId), cardId.toString());
+        }
     }
 
     @Override
@@ -130,6 +134,23 @@ class DecisionCacheImpl implements DecisionCache {
     @Override
     public void removeRoleFromUser(UUID roleId, UUID userId) {
         redis.opsForSet().remove(REDIS_USER_ROLES_SET_KEY.formatted(userId), roleId.toString());
+    }
+
+    @Override
+    public void removeUser(UUID userId) {
+        String userRolesKey = REDIS_USER_ROLES_SET_KEY.formatted(userId);
+        String userCardsKey = REDIS_USER_CARDS_SET_KEY.formatted(userId);
+
+        Set<String> cardIds = redis.opsForSet().members(userCardsKey);
+        if (cardIds != null) {
+            for (String cardId : cardIds) {
+                redis.opsForSet().remove(REDIS_ACTIVE_CARDS_KEY, cardId);
+                redis.delete(REDIS_CARD_USER_MAPPING_KEY.formatted(cardId));
+            }
+        }
+
+        redis.delete(userRolesKey);
+        redis.delete(userCardsKey);
     }
 
     @Override

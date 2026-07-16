@@ -5,10 +5,10 @@ import org.springframework.grpc.server.advice.GrpcAdvice;
 import org.springframework.grpc.server.advice.GrpcExceptionHandler;
 
 @GrpcAdvice
-public class GlobalGrpcExceptionHandler {
+class GlobalGrpcExceptionHandler {
 
     @GrpcExceptionHandler(IllegalArgumentException.class)
-    public Status handleIllegalArgument(IllegalArgumentException e) {
+    Status handleIllegalArgument(IllegalArgumentException e) {
         return Status.INVALID_ARGUMENT.withDescription(e.getMessage());
     }
 

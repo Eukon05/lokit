@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @GrpcService
 @RequiredArgsConstructor
-public class GrpcServerService extends IdentityServiceGrpc.IdentityServiceImplBase {
+class GrpcServerService extends IdentityServiceGrpc.IdentityServiceImplBase {
     private final IdpUserRepository repository;
 
     @Override

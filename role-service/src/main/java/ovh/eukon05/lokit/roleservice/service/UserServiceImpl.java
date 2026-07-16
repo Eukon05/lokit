@@ -43,4 +43,13 @@ public class UserServiceImpl implements UserService {
             } else throw new UserNotFoundException();
         });
     }
+
+    @Override
+    @Transactional
+    public void deleteUser(UUID userId) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.getRoles().clear();
+            userRepository.delete(user);
+        });
+    }
 }

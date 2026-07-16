@@ -141,4 +141,10 @@ public class EventListener {
         decisionCache.removeRoleFromUser(dto.roleId(), dto.userId());
     }
 
+    @RabbitHandler
+    public void receiveUserDeletedEvent(UserDeletedEventDTO dto) {
+        log.debug("Received user deleted event. Removing user {} roles and cards", dto.userId());
+        decisionCache.removeUser(dto.userId());
+    }
+
 }
