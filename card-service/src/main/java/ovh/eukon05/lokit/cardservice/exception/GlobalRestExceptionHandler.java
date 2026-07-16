@@ -1,5 +1,6 @@
 package ovh.eukon05.lokit.cardservice.exception;
 
+import io.grpc.StatusRuntimeException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,19 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalRestExceptionHandler {
+    @ExceptionHandler(StatusRuntimeException.class)
+    public ResponseEntity<ApiErrorDTO> handleStatusRuntimeException(StatusRuntimeException exception, HttpServletRequest request) {
+        HttpStatus status = switch (exception.getStatus().getCode()) {
+            case INVALID_ARGUMENT -> HttpStatus.BAD_REQUEST;
+            case INTERNAL -> HttpStatus.INTERNAL_SERVER_ERROR;
+            default -> HttpStatus.SERVICE_UNAVAILABLE;
+        };
+
+        ApiErrorDTO errorDTO = buildErrorResponse(request, status, exception.getStatus().getCode().toString(), Collections.emptyMap());
+
+        return ResponseEntity.status(status).body(errorDTO);
+    }
+
     @ExceptionHandler(CardNotFoundException.class)
     public ResponseEntity<ApiErrorDTO> handleCardNotFound(CardNotFoundException exception, HttpServletRequest request) {
         ApiErrorDTO errorDTO = buildErrorResponse(request, HttpStatus.NOT_FOUND, exception.getMessage(), Collections.emptyMap());
