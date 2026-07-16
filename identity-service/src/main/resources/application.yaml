@@ -2,4 +2,54 @@ spring:
   application:
     name: identity-service
 
+  datasource:
+    username: sa
+    password: password
+    url: jdbc:h2:mem:testdb
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  grpc:
+    server:
+      port: 9095
+      ssl:
+        enabled: true
+        client-auth: require
+        bundle: lokit-identity-server-ssl
+
+  ssl:
+    bundle:
+      jks:
+        lokit-identity-server-ssl:
+          keystore.location: classpath:identity-server-keystore.p12
+          keystore.password: changeit
+          keystore.type: PKCS12
+          truststore.location: classpath:identity-server-truststore.p12
+          truststore.password: changeit
+          truststore.type: PKCS12
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/lokit
+          jwk-set-uri: http://localhost:8090/realms/lokit/protocol/openid-connect/certs
+
+server:
+  port: 8085
+
+lokit:
+  jwt:
+    role-claims:
+      - realm_access.roles
+  keycloak:
+    server-url: http://localhost:8090
+    realm: lokit
+    client-id:
+    client-secret:
