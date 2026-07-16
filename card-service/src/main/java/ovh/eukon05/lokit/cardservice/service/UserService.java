@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface UserService {
     UserEntity getUser(UUID userId);
+
+    void deleteUser(UUID userId);
 }

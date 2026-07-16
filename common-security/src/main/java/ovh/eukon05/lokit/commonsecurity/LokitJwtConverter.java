@@ -17,7 +17,7 @@ class LokitJwtConverter implements Converter<Jwt, Collection<GrantedAuthority>> 
     private final List<String> claims;
     private final JwtGrantedAuthoritiesConverter defaultGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
-    public LokitJwtConverter(List<String> claims) {
+    LokitJwtConverter(List<String> claims) {
         this.claims = claims == null ? List.of() : claims;
     }
 

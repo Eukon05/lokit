@@ -43,6 +43,8 @@ public interface DecisionCache {
 
     void removeRoleFromUser(UUID roleId, UUID userId);
 
+    void removeUser(UUID userId);
+
     void addToken(String tokenHash, UUID deviceId);
 
     void removeToken(UUID deviceId);

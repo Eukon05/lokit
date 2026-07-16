@@ -2,7 +2,7 @@ mkdir -p output/server
 cd output/server || exit
 echo -e "GENERATING SERVER CERTS\n"
 
-for x in room card device role
+for x in room card device role identity
 do
   service="$x-service"
 

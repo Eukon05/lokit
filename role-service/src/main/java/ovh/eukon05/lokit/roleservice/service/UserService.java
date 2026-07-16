@@ -11,4 +11,6 @@ public interface UserService {
     void assignRoleToUser(UUID userId, RoleEntity role);
 
     void removeRoleFromUser(UUID userId, RoleEntity role);
+
+    void deleteUser(UUID userId);
 }

@@ -2,7 +2,7 @@ mkdir -p output/client
 cd output/client || exit
 echo -e "GENERATING CLIENT CERTS\n"
 
-for x in room device decision
+for x in role room device decision
 do
   service="$x-service"
 
