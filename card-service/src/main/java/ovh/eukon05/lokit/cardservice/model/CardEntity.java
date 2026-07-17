@@ -1,13 +1,13 @@
 package ovh.eukon05.lokit.cardservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "AppCard")
@@ -15,12 +15,14 @@ import java.util.UUID;
 @Setter
 public class CardEntity {
     @Id
-    private UUID id;
+    @NotBlank
+    private String id;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private UserEntity user;
 
+    @NotBlank
     private String name;
     private boolean active = true;
 

@@ -22,7 +22,7 @@ public class CardServiceClientImpl implements CardServiceClient {
         Iterator<GetCardReply> cardsIter = stub.listActiveCards(Empty.getDefaultInstance());
         List<CardState> cards = new ArrayList<>();
 
-        cardsIter.forEachRemaining(item -> cards.add(new CardState(UUID.fromString(item.getCardId()), UUID.fromString(item.getUserId()))));
+        cardsIter.forEachRemaining(item -> cards.add(new CardState(item.getCardId(), UUID.fromString(item.getUserId()))));
         return cards;
     }
 }

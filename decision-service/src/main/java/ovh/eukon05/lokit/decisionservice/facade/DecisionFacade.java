@@ -14,7 +14,7 @@ import java.util.UUID;
 public class DecisionFacade {
     private final DecisionService decisionService;
 
-    public GetDecisionDTO getDecision(UUID cardId, UUID deviceId) {
+    public GetDecisionDTO getDecision(String cardId, UUID deviceId) {
         DecisionStatus decision = decisionService.getDecision(cardId, deviceId);
         return new GetDecisionDTO(decision.equals(DecisionStatus.OK), Instant.now(), decision);
     }

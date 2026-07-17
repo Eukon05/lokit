@@ -5,9 +5,9 @@ import java.util.UUID;
 public interface DecisionCache {
     boolean isRoomActive(UUID roomId);
 
-    boolean isCardActive(UUID cardId);
+    boolean isCardActive(String cardId);
 
-    UUID getCardUserMapping(UUID cardId);
+    UUID getCardUserMapping(String cardId);
 
     UUID getDeviceRoomMapping(UUID deviceId);
 
@@ -19,9 +19,9 @@ public interface DecisionCache {
 
     void removeActiveRole(UUID roleId);
 
-    void addActiveCard(UUID cardId);
+    void addActiveCard(String cardId);
 
-    void removeActiveCard(UUID cardId);
+    void removeActiveCard(String cardId);
 
     void addActiveRoom(UUID roomId);
 
@@ -35,9 +35,9 @@ public interface DecisionCache {
 
     void removeDeviceRoom(UUID deviceId);
 
-    void setCardUser(UUID cardId, UUID userId);
+    void setCardUser(String cardId, UUID userId);
 
-    void removeCardUser(UUID cardId);
+    void removeCardUser(String cardId);
 
     void addRoleToUser(UUID roleId, UUID userId);
 

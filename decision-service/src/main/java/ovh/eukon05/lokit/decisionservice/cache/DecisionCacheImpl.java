@@ -23,12 +23,12 @@ class DecisionCacheImpl implements DecisionCache {
     }
 
     @Override
-    public boolean isCardActive(UUID cardId) {
-        return redis.opsForSet().isMember(REDIS_ACTIVE_CARDS_KEY, cardId.toString());
+    public boolean isCardActive(String cardId) {
+        return redis.opsForSet().isMember(REDIS_ACTIVE_CARDS_KEY, cardId);
     }
 
     @Override
-    public UUID getCardUserMapping(UUID cardId) {
+    public UUID getCardUserMapping(String cardId) {
         String key = REDIS_CARD_USER_MAPPING_KEY.formatted(cardId);
         String user = redis.opsForValue().get(key);
         if (user == null) throw new CardWithoutUserException(cardId);
@@ -73,13 +73,13 @@ class DecisionCacheImpl implements DecisionCache {
     }
 
     @Override
-    public void addActiveCard(UUID cardId) {
-        redis.opsForSet().add(REDIS_ACTIVE_CARDS_KEY, cardId.toString());
+    public void addActiveCard(String cardId) {
+        redis.opsForSet().add(REDIS_ACTIVE_CARDS_KEY, cardId);
     }
 
     @Override
-    public void removeActiveCard(UUID cardId) {
-        redis.opsForSet().remove(REDIS_ACTIVE_CARDS_KEY, cardId.toString());
+    public void removeActiveCard(String cardId) {
+        redis.opsForSet().remove(REDIS_ACTIVE_CARDS_KEY, cardId);
     }
 
     @Override
@@ -113,16 +113,16 @@ class DecisionCacheImpl implements DecisionCache {
     }
 
     @Override
-    public void setCardUser(UUID cardId, UUID userId) {
+    public void setCardUser(String cardId, UUID userId) {
         redis.opsForValue().set(REDIS_CARD_USER_MAPPING_KEY.formatted(cardId), userId.toString());
-        redis.opsForSet().add(REDIS_USER_CARDS_SET_KEY.formatted(userId), cardId.toString());
+        redis.opsForSet().add(REDIS_USER_CARDS_SET_KEY.formatted(userId), cardId);
     }
 
     @Override
-    public void removeCardUser(UUID cardId) {
+    public void removeCardUser(String cardId) {
         String userId = redis.opsForValue().getAndDelete(REDIS_CARD_USER_MAPPING_KEY.formatted(cardId));
         if (userId != null) {
-            redis.opsForSet().remove(REDIS_USER_CARDS_SET_KEY.formatted(userId), cardId.toString());
+            redis.opsForSet().remove(REDIS_USER_CARDS_SET_KEY.formatted(userId), cardId);
         }
     }
 

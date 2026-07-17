@@ -18,7 +18,6 @@ import ovh.eukon05.lokit.common.event.dto.CardDisabledEventDTO;
 import ovh.eukon05.lokit.common.event.dto.CardEnabledEventDTO;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,30 +27,30 @@ public class CardFacade {
     private final EventClient eventClient;
     private final CardMapper cardMapper;
 
-    public GetCardDTO getCard(UUID id) {
+    public GetCardDTO getCard(String id) {
         return cardMapper.toGetCardDTO(cardService.findById(id));
     }
 
-    public UUID createCard(CreateCardDTO cardDTO) {
+    public String createCard(CreateCardDTO cardDTO) {
         UserEntity user = userService.getUser(cardDTO.userId());
         CardEntity card = cardMapper.fromCreateCardDTO(cardDTO);
         card.setUser(user);
-        UUID id = cardService.saveCard(card);
+        String id = cardService.saveCard(card);
         eventClient.sendCardCreatedEvent(new CardCreatedEventDTO(Instant.now(), id, cardDTO.userId()));
         return id;
     }
 
-    public void deleteCard(UUID id) {
+    public void deleteCard(String id) {
         cardService.deleteCard(id);
         eventClient.sendCardDeletedEvent(new CardDeletedEventDTO(Instant.now(), id));
     }
 
-    public void enableCard(UUID id) {
+    public void enableCard(String id) {
         CardEntity card = cardService.enableCard(id);
         eventClient.sendCardEnabledEvent(new CardEnabledEventDTO(Instant.now(), id, card.getUser().getId()));
     }
 
-    public void disableCard(UUID id) {
+    public void disableCard(String id) {
         cardService.disableCard(id);
         eventClient.sendCardDisabledEvent(new CardDisabledEventDTO(Instant.now(), id));
     }

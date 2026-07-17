@@ -22,7 +22,7 @@ public class GrpcServerService extends CardServiceGrpc.CardServiceImplBase {
 
         for (CardEntity card : cards) {
             GetCardReply reply = GetCardReply.newBuilder()
-                    .setCardId(card.getId().toString())
+                    .setCardId(card.getId())
                     .setUserId(card.getUser().getId().toString())
                     .build();
             responseObserver.onNext(reply);

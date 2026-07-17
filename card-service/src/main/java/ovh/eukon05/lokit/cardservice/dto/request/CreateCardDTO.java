@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record CreateCardDTO(@NotNull UUID id, @NotNull UUID userId, @NotBlank String name) {
+public record CreateCardDTO(@NotBlank String id, @NotNull UUID userId, @NotBlank String name) {
 }

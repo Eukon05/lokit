@@ -8,15 +8,13 @@ import ovh.eukon05.lokit.cardservice.exception.CardNotFoundException;
 import ovh.eukon05.lokit.cardservice.model.CardEntity;
 import ovh.eukon05.lokit.cardservice.repository.CardRepository;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
 
     @Override
-    public CardEntity findById(UUID id) {
+    public CardEntity findById(String id) {
         return cardRepository.findById(id).orElseThrow(() -> new CardNotFoundException(id));
     }
 
@@ -26,27 +24,27 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public UUID saveCard(CardEntity card) {
+    public String saveCard(CardEntity card) {
         cardRepository.save(card);
         return card.getId();
     }
 
     @Override
-    public void deleteCard(UUID id) {
+    public void deleteCard(String id) {
         cardRepository.deleteById(id);
     }
 
     @Override
-    public CardEntity enableCard(UUID id) {
+    public CardEntity enableCard(String id) {
         CardEntity card = findById(id);
         card.setActive(true);
         return cardRepository.save(card);
     }
 
     @Override
-    public CardEntity disableCard(UUID id) {
+    public void disableCard(String id) {
         CardEntity card = findById(id);
         card.setActive(false);
-        return cardRepository.save(card);
+        cardRepository.save(card);
     }
 }

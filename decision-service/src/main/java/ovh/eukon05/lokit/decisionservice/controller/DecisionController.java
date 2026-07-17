@@ -18,7 +18,7 @@ public class DecisionController {
     private final DecisionFacade decisionFacade;
 
     @GetMapping
-    public GetDecisionDTO getDecision(@AuthenticationPrincipal UUID deviceId, @RequestParam UUID cardId) {
+    public GetDecisionDTO getDecision(@AuthenticationPrincipal UUID deviceId, @RequestParam String cardId) {
         return decisionFacade.getDecision(cardId, deviceId);
     }
 

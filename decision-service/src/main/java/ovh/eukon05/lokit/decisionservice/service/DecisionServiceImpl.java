@@ -14,7 +14,7 @@ public class DecisionServiceImpl implements DecisionService {
     private final DecisionCache decisionCache;
 
     @Override
-    public DecisionStatus getDecision(UUID cardId, UUID deviceId) {
+    public DecisionStatus getDecision(String cardId, UUID deviceId) {
         if (!decisionCache.isCardActive(cardId))
             return DecisionStatus.CARD_DISABLED;
 

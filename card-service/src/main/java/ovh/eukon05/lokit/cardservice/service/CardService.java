@@ -4,18 +4,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ovh.eukon05.lokit.cardservice.model.CardEntity;
 
-import java.util.UUID;
-
 public interface CardService {
-    CardEntity findById(UUID id);
+    CardEntity findById(String id);
 
     Page<CardEntity> findAll(Pageable pageable);
 
-    UUID saveCard(CardEntity card);
+    String saveCard(CardEntity card);
 
-    void deleteCard(UUID id);
+    void deleteCard(String id);
 
-    CardEntity enableCard(UUID id);
+    CardEntity enableCard(String id);
 
-    CardEntity disableCard(UUID id);
+    void disableCard(String id);
 }

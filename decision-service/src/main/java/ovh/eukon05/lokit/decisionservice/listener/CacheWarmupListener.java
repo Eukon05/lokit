@@ -55,7 +55,7 @@ public class CacheWarmupListener {
         addSetMembers(REDIS_ACTIVE_ROLES_KEY, roleIds);
 
         log.debug("Saving active cards to Redis...");
-        cards.forEach(card -> redis.opsForSet().add(REDIS_ACTIVE_CARDS_KEY, card.id().toString()));
+        cards.forEach(card -> redis.opsForSet().add(REDIS_ACTIVE_CARDS_KEY, card.id()));
 
         log.debug("Saving active rooms to Redis...");
         rooms.forEach(room -> redis.opsForSet().add(REDIS_ACTIVE_ROOMS_KEY, room.id().toString()));
@@ -78,7 +78,7 @@ public class CacheWarmupListener {
         Map<String, Set<String>> userCardMap = cards.stream()
                 .collect(Collectors.groupingBy(
                         card -> REDIS_USER_CARDS_SET_KEY.formatted(card.userId()),
-                        Collectors.mapping(card -> card.id().toString(), Collectors.toSet())
+                        Collectors.mapping(CardState::id, Collectors.toSet())
                 ));
 
         Map<String, Set<String>> userMap = users.stream()
