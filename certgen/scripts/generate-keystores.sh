@@ -18,7 +18,7 @@ do
     -certfile "$CA_CERT"
 done
 
-for x in role room device decision
+for x in role room device card decision
 do
   echo -e "Generating $x client keystore..."
   rm -f "output/client/$x/$x-client-keystore.p12"

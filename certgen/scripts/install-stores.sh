@@ -11,7 +11,7 @@ done
 
 echo -e "\nINSTALLING CLIENT STORES\n"
 
-for x in room device decision role
+for x in room device card decision role
 do
   echo "Installing $x client stores..."
     cp -rf output/client/$x/*.p12 ../$x-service/src/main/resources

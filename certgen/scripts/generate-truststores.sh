@@ -4,7 +4,7 @@ CA_CERT="output/ca/ca-cert.pem"
 echo -e "GENERATING TRUSTSTORES"
 echo -e "Truststore password = $STOREPASS"
 
-for x in role room device decision
+for x in role room device card decision
 do
   echo -e "\nGenerating $x client truststore..."
   rm -f "output/client/$x/$x-client-truststore.p12"
