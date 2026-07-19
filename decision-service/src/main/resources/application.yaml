@@ -4,35 +4,35 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${LOKIT_REDIS_HOST}
+      port: ${LOKIT_REDIS_PORT}
 
   rabbitmq:
-    username: user
-    password: password
-    host: localhost
-    port: 5672
+    username: ${LOKIT_RABBITMQ_USERNAME}
+    password: ${LOKIT_RABBITMQ_PASSWORD}
+    host: ${LOKIT_RABBITMQ_HOST}
+    port: ${LOKIT_RABBITMQ_PORT}
 
   grpc:
     client:
       channel:
         role-service:
-          target: static://localhost:9090
+          target: ${LOKIT_ROLE_GRPC_TARGET}
           ssl:
             enabled: true
             bundle: lokit-decision-client-ssl
         room-service:
-          target: static://localhost:9091
+          target: ${LOKIT_ROOM_GRPC_TARGET}
           ssl:
             enabled: true
             bundle: lokit-decision-client-ssl
         card-service:
-          target: static://localhost:9092
+          target: ${LOKIT_CARD_GRPC_TARGET}
           ssl:
             enabled: true
             bundle: lokit-decision-client-ssl
         device-service:
-          target: static://localhost:9093
+          target: ${LOKIT_DEVICE_GRPC_TARGET}
           ssl:
             enabled: true
             bundle: lokit-decision-client-ssl
@@ -42,14 +42,14 @@ spring:
       jks:
         lokit-decision-client-ssl:
           keystore.location: classpath:decision-client-keystore.p12
-          keystore.password: changeit
+          keystore.password: ${LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
           truststore.location: classpath:decision-client-truststore.p12
-          truststore.password: changeit
+          truststore.password: ${LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
 
 server:
-  port: 8084
+  port: ${LOKIT_DECISION_PORT}
 
 logging:
   level:

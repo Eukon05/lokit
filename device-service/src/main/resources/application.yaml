@@ -2,9 +2,9 @@ spring:
   application:
     name: device-service
   datasource:
-    username: sa
-    password: password
-    url: jdbc:h2:mem:testdb
+    username: ${LOKIT_DEVICE_DB_USERNAME}
+    password: ${LOKIT_DEVICE_DB_PASSWORD}
+    url: ${LOKIT_DEVICE_DB_URL}
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -16,12 +16,12 @@ spring:
     client:
       channel:
         room-service:
-          target: static://localhost:9091
+          target: ${LOKIT_ROOM_GRPC_TARGET}
           ssl:
             enabled: true
             bundle: lokit-device-client-ssl
     server:
-      port: 9093
+      port: ${LOKIT_DEVICE_GRPC_PORT}
       ssl:
         enabled: true
         client-auth: require
@@ -32,31 +32,35 @@ spring:
       jks:
         lokit-device-server-ssl:
           keystore.location: classpath:device-server-keystore.p12
-          keystore.password: changeit
+          keystore.password: ${LOKIT_DEVICE_TLS_SERVER_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
           truststore.location: classpath:device-server-truststore.p12
-          truststore.password: changeit
+          truststore.password: ${LOKIT_DEVICE_TLS_SERVER_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
         lokit-device-client-ssl:
           keystore.location: classpath:device-client-keystore.p12
-          keystore.password: changeit
+          keystore.password: ${LOKIT_DEVICE_TLS_CLIENT_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
           truststore.location: classpath:device-client-truststore.p12
-          truststore.password: changeit
+          truststore.password: ${LOKIT_DEVICE_TLS_CLIENT_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
 
   rabbitmq:
-    username: user
-    password: password
-    host: localhost
-    port: 5672
+    username: ${LOKIT_RABBITMQ_USERNAME}
+    password: ${LOKIT_RABBITMQ_PASSWORD}
+    host: ${LOKIT_RABBITMQ_HOST}
+    port: ${LOKIT_RABBITMQ_PORT}
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8090/realms/lokit
-          jwk-set-uri: http://localhost:8090/realms/lokit/protocol/openid-connect/certs
+          issuer-uri: ${LOKIT_OAUTH_ISSUER_URI}
+          jwk-set-uri: ${LOKIT_OAUTH_JWK_URI}
 
 server:
-  port: 8083
+  port: ${LOKIT_DEVICE_PORT}
+
+lokit:
+  jwt:
+    role-claims: ${LOKIT_JWT_ROLE_CLAIMS}
