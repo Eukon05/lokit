@@ -1,6 +1,8 @@
 package ovh.eukon05.lokit.roleservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,7 +22,14 @@ public class RoleEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotBlank
+    @Size(max = 100)
+    @Column(nullable = false, length = 100)
     private String name;
+
+    @NotBlank
+    @Size(max = 500)
+    @Column(nullable = false, length = 500)
     private String description;
     private boolean active = true;
 

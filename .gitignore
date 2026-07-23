@@ -42,5 +42,8 @@ build/
 ### certgen output ###
 /certgen/output/
 
-## certs ###
+### certs ###
 /*-service/src/main/resources/*.p12
+
+### env ###
+.env

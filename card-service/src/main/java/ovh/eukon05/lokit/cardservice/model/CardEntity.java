@@ -2,6 +2,7 @@ package ovh.eukon05.lokit.cardservice.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,6 +17,7 @@ import java.time.Instant;
 public class CardEntity {
     @Id
     @NotBlank
+    @Size(min = 8, max = 8)
     private String id;
 
     @ManyToOne(optional = false)
@@ -23,6 +25,7 @@ public class CardEntity {
     private UserEntity user;
 
     @NotBlank
+    @Size(max = 100)
     private String name;
     private boolean active = true;
 

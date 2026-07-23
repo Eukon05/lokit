@@ -1,4 +1,4 @@
-package ovh.eukon05.lokit.identityservice.exception;
+package ovh.eukon05.lokit.decisionservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -14,19 +14,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import ovh.eukon05.lokit.common.response.ApiErrorDTO;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 class GlobalRestExceptionHandler {
-    @ExceptionHandler(UserNotFoundException.class)
-    ResponseEntity<ApiErrorDTO> handleUserNotFound(UserNotFoundException exception, HttpServletRequest request) {
-        ApiErrorDTO errorDTO = buildErrorResponse(request, HttpStatus.NOT_FOUND, exception.getMessage(), Collections.emptyMap());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDTO);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
