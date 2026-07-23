@@ -41,6 +41,15 @@ spring:
           issuer-uri: ${LOKIT_OAUTH_ISSUER_URI}
           jwk-set-uri: ${LOKIT_OAUTH_JWK_URI}
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${LOKIT_EUREKA_HOST}:${LOKIT_EUREKA_PORT}/eureka
+  instance:
+    prefer-ip-address: true
+    metadata-map:
+      grpc_port: ${spring.grpc.server.port}
+
 server:
   port: ${LOKIT_IDENTITY_PORT}
 

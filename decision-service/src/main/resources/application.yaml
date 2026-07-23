@@ -48,6 +48,13 @@ spring:
           truststore.password: ${LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${LOKIT_EUREKA_HOST}:${LOKIT_EUREKA_PORT}/eureka
+  instance:
+    prefer-ip-address: true
+
 server:
   port: ${LOKIT_DECISION_PORT}
 

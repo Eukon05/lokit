@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>eureka</module>
         <module>common</module>
         <module>common-security</module>
         <module>identity-service</module>
