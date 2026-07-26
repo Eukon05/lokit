@@ -1,0 +1,309 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - ${LOKIT_NGINX_PORT}:80
+    environment:
+      LOKIT_NGINX_HOST: ${LOKIT_NGINX_HOST}
+    volumes:
+      - ./docker/nginx/default.conf.template:/etc/nginx/templates/default.conf.template
+    networks:
+      - lokit-internal
+    depends_on:
+      - identity-service
+      - role-service
+      - room-service
+      - device-service
+      - card-service
+      - decision-service
+    restart:
+      on-failure
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.0
+    ports:
+      - ${LOKIT_KEYCLOAK_PORT}:8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${LOKIT_KEYCLOAK_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${LOKIT_KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME_URL: ${LOKIT_KEYCLOAK_PUBLIC_URL}
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+    command:
+      - start-dev
+    networks:
+      - lokit-internal
+    volumes:
+      - lokit-keycloak-vol:/opt/keycloak/data
+    restart:
+      on-failure
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - ${LOKIT_RABBIT_PANEL_PORT}:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: ${LOKIT_RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${LOKIT_RABBITMQ_PASSWORD}
+    networks:
+      - lokit-internal
+    restart:
+      on-failure
+
+  redis:
+    image: redis:latest
+    networks:
+      - lokit-internal
+    restart:
+      on-failure
+
+  postgres:
+    image: postgres:16
+    networks:
+      - lokit-internal
+    volumes:
+      - lokit-db-vol:/var/lib/postgresql/data
+      - ./docker/postgres/create-multiple-postgresql-databases.sh:/docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh
+    environment:
+      POSTGRES_USER: ${LOKIT_POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${LOKIT_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${LOKIT_POSTGRES_DB}
+      POSTGRES_MULTIPLE_DATABASES: identity,role,room,card,device
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${LOKIT_POSTGRES_USERNAME} -d ${LOKIT_POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart:
+      on-failure
+
+  identity-service:
+    image: eukon/lokit-identity
+    build:
+      context: .
+      args:
+        SERVICE: identity-service
+    networks:
+      - lokit-internal
+    depends_on:
+      keycloak:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    environment:
+      LOKIT_IDENTITY_DB_USERNAME: ${LOKIT_POSTGRES_USERNAME}
+      LOKIT_IDENTITY_DB_PASSWORD: ${LOKIT_POSTGRES_PASSWORD}
+      LOKIT_IDENTITY_DB_URL: jdbc:postgresql://postgres:5432/identity
+      LOKIT_IDENTITY_GRPC_PORT: 9090
+      LOKIT_IDENTITY_PORT: 8080
+      LOKIT_IDENTITY_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_IDENTITY_TLS_SERVER_KEYSTORE_PASSWORD}
+      LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD}
+      LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL}/realms/${LOKIT_KEYCLOAK_REALM}
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM}/protocol/openid-connect/certs
+      LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS}
+      LOKIT_KEYCLOAK_URL: http://keycloak:8080
+      LOKIT_KEYCLOAK_REALM: ${LOKIT_KEYCLOAK_REALM}
+      LOKIT_KEYCLOAK_CLIENT_ID: ${LOKIT_KEYCLOAK_CLIENT_ID}
+      LOKIT_KEYCLOAK_CLIENT_SECRET: ${LOKIT_KEYCLOAK_CLIENT_SECRET}
+    restart:
+      on-failure
+
+  role-service:
+    image: eukon/lokit-role
+    build:
+      context: .
+      args:
+        SERVICE: role-service
+    networks:
+      - lokit-internal
+    depends_on:
+      keycloak:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      identity-service:
+        condition: service_started
+    environment:
+      LOKIT_ROLE_DB_USERNAME: ${LOKIT_POSTGRES_USERNAME}
+      LOKIT_ROLE_DB_PASSWORD: ${LOKIT_POSTGRES_PASSWORD}
+      LOKIT_ROLE_DB_URL: jdbc:postgresql://postgres:5432/role
+      LOKIT_ROLE_GRPC_PORT: 9090
+      LOKIT_ROLE_PORT: 8080
+      LOKIT_IDENTITY_GRPC_TARGET: static://identity-service:9090
+      LOKIT_ROLE_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_ROLE_TLS_SERVER_KEYSTORE_PASSWORD}
+      LOKIT_ROLE_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_ROLE_TLS_SERVER_TRUSTSTORE_PASSWORD}
+      LOKIT_ROLE_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_ROLE_TLS_CLIENT_KEYSTORE_PASSWORD}
+      LOKIT_ROLE_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_ROLE_TLS_CLIENT_TRUSTSTORE_PASSWORD}
+      LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME}
+      LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD}
+      LOKIT_RABBITMQ_HOST: rabbitmq
+      LOKIT_RABBITMQ_PORT: 5672
+      LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL}/realms/${LOKIT_KEYCLOAK_REALM}
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM}/protocol/openid-connect/certs
+      LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS}
+    restart:
+      on-failure
+
+  room-service:
+    image: eukon/lokit-room
+    build:
+      context: .
+      args:
+        SERVICE: room-service
+    networks:
+      - lokit-internal
+    depends_on:
+      keycloak:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      role-service:
+        condition: service_started
+    environment:
+      LOKIT_ROOM_DB_USERNAME: ${LOKIT_POSTGRES_USERNAME}
+      LOKIT_ROOM_DB_PASSWORD: ${LOKIT_POSTGRES_PASSWORD}
+      LOKIT_ROOM_DB_URL: jdbc:postgresql://postgres:5432/room
+      LOKIT_ROOM_GRPC_PORT: 9090
+      LOKIT_ROOM_PORT: 8080
+      LOKIT_ROLE_GRPC_TARGET: static://role-service:9090
+      LOKIT_ROOM_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_ROOM_TLS_SERVER_KEYSTORE_PASSWORD}
+      LOKIT_ROOM_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_ROOM_TLS_SERVER_TRUSTSTORE_PASSWORD}
+      LOKIT_ROOM_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_ROOM_TLS_CLIENT_KEYSTORE_PASSWORD}
+      LOKIT_ROOM_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_ROOM_TLS_CLIENT_TRUSTSTORE_PASSWORD}
+      LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME}
+      LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD}
+      LOKIT_RABBITMQ_HOST: rabbitmq
+      LOKIT_RABBITMQ_PORT: 5672
+      LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL}/realms/${LOKIT_KEYCLOAK_REALM}
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM}/protocol/openid-connect/certs
+      LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS}
+    restart:
+      on-failure
+
+  card-service:
+    image: eukon/lokit-card
+    build:
+      context: .
+      args:
+        SERVICE: card-service
+    networks:
+      - lokit-internal
+    depends_on:
+      keycloak:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      identity-service:
+        condition: service_started
+    environment:
+      LOKIT_CARD_DB_USERNAME: ${LOKIT_POSTGRES_USERNAME}
+      LOKIT_CARD_DB_PASSWORD: ${LOKIT_POSTGRES_PASSWORD}
+      LOKIT_CARD_DB_URL: jdbc:postgresql://postgres:5432/card
+      LOKIT_CARD_GRPC_PORT: 9090
+      LOKIT_CARD_PORT: 8080
+      LOKIT_IDENTITY_GRPC_TARGET: static://identity-service:9090
+      LOKIT_CARD_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_CARD_TLS_SERVER_KEYSTORE_PASSWORD}
+      LOKIT_CARD_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_CARD_TLS_SERVER_TRUSTSTORE_PASSWORD}
+      LOKIT_CARD_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_CARD_TLS_CLIENT_KEYSTORE_PASSWORD}
+      LOKIT_CARD_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_CARD_TLS_CLIENT_TRUSTSTORE_PASSWORD}
+      LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME}
+      LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD}
+      LOKIT_RABBITMQ_HOST: rabbitmq
+      LOKIT_RABBITMQ_PORT: 5672
+      LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL}/realms/${LOKIT_KEYCLOAK_REALM}
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM}/protocol/openid-connect/certs
+      LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS}
+    restart:
+      on-failure
+
+  device-service:
+    image: eukon/lokit-device
+    build:
+      context: .
+      args:
+        SERVICE: device-service
+    networks:
+      - lokit-internal
+    depends_on:
+      keycloak:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      room-service:
+        condition: service_started
+    environment:
+      LOKIT_DEVICE_DB_USERNAME: ${LOKIT_POSTGRES_USERNAME}
+      LOKIT_DEVICE_DB_PASSWORD: ${LOKIT_POSTGRES_PASSWORD}
+      LOKIT_DEVICE_DB_URL: jdbc:postgresql://postgres:5432/device
+      LOKIT_DEVICE_GRPC_PORT: 9090
+      LOKIT_DEVICE_PORT: 8080
+      LOKIT_ROOM_GRPC_TARGET: static://room-service:9090
+      LOKIT_DEVICE_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_SERVER_KEYSTORE_PASSWORD}
+      LOKIT_DEVICE_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_SERVER_TRUSTSTORE_PASSWORD}
+      LOKIT_DEVICE_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_CLIENT_KEYSTORE_PASSWORD}
+      LOKIT_DEVICE_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_CLIENT_TRUSTSTORE_PASSWORD}
+      LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME}
+      LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD}
+      LOKIT_RABBITMQ_HOST: rabbitmq
+      LOKIT_RABBITMQ_PORT: 5672
+      LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL}/realms/${LOKIT_KEYCLOAK_REALM}
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM}/protocol/openid-connect/certs
+      LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS}
+    restart:
+      on-failure
+
+  decision-service:
+    image: eukon/lokit-decision
+    build:
+      context: .
+      args:
+        SERVICE: decision-service
+    networks:
+      - lokit-internal
+    depends_on:
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      role-service:
+        condition: service_started
+      room-service:
+        condition: service_started
+      card-service:
+        condition: service_started
+      device-service:
+        condition: service_started
+    environment:
+      LOKIT_DECISION_PORT: 8080
+      LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PASSWORD}
+      LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PASSWORD}
+      LOKIT_REDIS_HOST: redis
+      LOKIT_REDIS_PORT: 6379
+      LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME}
+      LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD}
+      LOKIT_RABBITMQ_HOST: rabbitmq
+      LOKIT_RABBITMQ_PORT: 5672
+      LOKIT_ROLE_GRPC_TARGET: static://role-service:9090
+      LOKIT_ROOM_GRPC_TARGET: static://room-service:9090
+      LOKIT_CARD_GRPC_TARGET: static://card-service:9090
+      LOKIT_DEVICE_GRPC_TARGET: static://device-service:9090
+    restart:
+      on-failure
+
+networks:
+  lokit-internal:
+
+volumes:
+  lokit-db-vol:
+  lokit-keycloak-vol:

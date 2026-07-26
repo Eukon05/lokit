@@ -2,6 +2,8 @@ package ovh.eukon05.lokit.roleservice.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.roleservice.client.IdentityServiceClient;
 import ovh.eukon05.lokit.roleservice.exception.UserNotFoundException;
@@ -42,6 +44,11 @@ public class UserServiceImpl implements UserService {
                 return userRepository.save(userEntity);
             } else throw new UserNotFoundException();
         });
+    }
+
+    @Override
+    public Page<UserEntity> getUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

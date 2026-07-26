@@ -13,7 +13,7 @@ import ovh.eukon05.lokit.identityservice.facade.IdentityFacade;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/identity")
+@RequestMapping("/api/v1/identity")
 @RequiredArgsConstructor
 public class IdentityController {
     private final IdentityFacade facade;

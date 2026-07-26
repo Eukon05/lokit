@@ -1,7 +1,7 @@
 echo -e "INSTALLING SERVER STORES\n"
 
 echo -e "Removing old stores..."
-rm -f *-service/src/main/resources/*.p12
+rm -f ../*-service/src/main/resources/*.p12
 
 for x in room device card role identity
 do

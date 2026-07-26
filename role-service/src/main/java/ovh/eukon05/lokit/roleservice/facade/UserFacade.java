@@ -1,6 +1,8 @@
 package ovh.eukon05.lokit.roleservice.facade;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.common.event.dto.UserRoleAddedEventDTO;
 import ovh.eukon05.lokit.common.event.dto.UserRoleRemovedEventDTO;
@@ -36,5 +38,9 @@ public class UserFacade {
         RoleEntity role = roleService.findById(roleId);
         userService.removeRoleFromUser(userId, role);
         eventClient.sendUserRoleRemovedEvent(new UserRoleRemovedEventDTO(Instant.now(), userId, roleId));
+    }
+
+    public PagedModel<GetUserDTO> getUsers(Pageable pageable) {
+        return new PagedModel<>(userService.getUsers(pageable).map(userMapper::toGetUserDTO));
     }
 }

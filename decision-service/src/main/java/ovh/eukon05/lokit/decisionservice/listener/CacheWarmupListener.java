@@ -1,5 +1,7 @@
 package ovh.eukon05.lokit.decisionservice.listener;
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -34,7 +36,26 @@ public class CacheWarmupListener {
     private final StringRedisTemplate redis;
 
     @EventListener(ApplicationStartedEvent.class)
-    public void populateCache() {
+    public void populateCache() throws InterruptedException {
+        boolean isPopulated = false;
+        int timeout = 15;
+
+        while (!isPopulated) {
+            try {
+                saveGrpcDataToRedis();
+                isPopulated = true;
+            } catch (StatusRuntimeException e) {
+                if (e.getStatus().getCode() == Status.Code.UNAVAILABLE) {
+                    log.warn("gRPC endpoint unavailable, waiting for {} seconds...", timeout);
+                    Thread.sleep(timeout * 1000L);
+                    if (timeout < 480) timeout *= 2;
+                }
+            }
+        }
+
+    }
+
+    private void saveGrpcDataToRedis() {
         log.info("Starting cache warmup!");
         log.debug("Fetching devices through gRPC...");
         List<DeviceState> devices = deviceClient.listActiveDevices();
