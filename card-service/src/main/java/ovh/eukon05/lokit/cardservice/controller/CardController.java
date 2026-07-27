@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.cardservice.dto.request.CreateCardDTO;
 import ovh.eukon05.lokit.cardservice.dto.response.GetCardDTO;
@@ -13,6 +14,7 @@ import ovh.eukon05.lokit.cardservice.facade.CardFacade;
 @RestController
 @RequestMapping("/api/v1/card")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('LOKIT_ADMIN')")
 public class CardController {
     private final CardFacade cardFacade;
 
