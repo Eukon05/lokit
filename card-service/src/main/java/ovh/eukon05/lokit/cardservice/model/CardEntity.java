@@ -11,7 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 
 @Entity
-@Table(name = "AppCard")
+@Table(name = "LOKIT_CARD")
 @Getter
 @Setter
 public class CardEntity {
@@ -21,7 +21,7 @@ public class CardEntity {
     private String id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "USER_ID", nullable = false)
     private UserEntity user;
 
     @NotBlank

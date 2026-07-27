@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "AppDevice")
+@Table(name = "LOKIT_DEVICE")
 @Getter
 @Setter
 public class DeviceEntity {

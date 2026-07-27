@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "AppRoom")
+@Table(name = "LOKIT_ROOM")
 @Getter
 @Setter
 public class RoomEntity {
@@ -29,5 +29,10 @@ public class RoomEntity {
     private boolean active = true;
 
     @ElementCollection
+    @CollectionTable(
+            name = "LOKIT_ROOM_ROLES",
+            joinColumns = @JoinColumn(name = "ROOM_ID")
+    )
+    @Column(name = "ROLE_ID")
     private Set<UUID> acl = new HashSet<>();
 }

@@ -11,7 +11,7 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "AppIdpUser")
+@Table(name = "LOKIT_IDP_USER")
 @Getter
 @Setter
 public class IdpUserEntity {

@@ -1,9 +1,6 @@
 package ovh.eukon05.lokit.roleservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "RoleUser")
+@Table(name = "LOKIT_USER")
 @Getter
 @Setter
 public class UserEntity {
@@ -23,6 +20,10 @@ public class UserEntity {
     private UUID id;
 
     @ManyToMany
+    @JoinTable(name = "LOKIT_USER_ROLE",
+            joinColumns = @JoinColumn(name = "USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ROLE_ID")
+    )
     private Set<RoleEntity> roles = new HashSet<>();
 
     @CreationTimestamp

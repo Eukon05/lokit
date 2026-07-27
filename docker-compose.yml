@@ -70,7 +70,7 @@ services:
       POSTGRES_DB: ${LOKIT_POSTGRES_DB}
       POSTGRES_MULTIPLE_DATABASES: identity,role,room,card,device
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${LOKIT_POSTGRES_USERNAME} -d ${LOKIT_POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${LOKIT_POSTGRES_USERNAME}" ]
       interval: 5s
       timeout: 5s
       retries: 10

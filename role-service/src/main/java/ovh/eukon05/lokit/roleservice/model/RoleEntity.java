@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "AppRole")
+@Table(name = "LOKIT_ROLE")
 @Getter
 @Setter
 public class RoleEntity {
