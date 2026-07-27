@@ -67,7 +67,6 @@ services:
     environment:
       POSTGRES_USER: ${LOKIT_POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${LOKIT_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${LOKIT_POSTGRES_DB}
       POSTGRES_MULTIPLE_DATABASES: identity,role,room,card,device
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${LOKIT_POSTGRES_USERNAME}" ]
