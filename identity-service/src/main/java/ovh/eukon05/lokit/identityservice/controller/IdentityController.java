@@ -18,14 +18,14 @@ import java.util.UUID;
 public class IdentityController {
     private final IdentityFacade facade;
 
-    @GetMapping("/me")
+    @PostMapping("/me")
     public GetUserDTO getMe(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
         return facade.getIdpUser(principal.getAttribute("sub"));
     }
 
     @PreAuthorize("hasRole('LOKIT_ADMIN')")
     @GetMapping("/{userId}")
-    public GetUserDTO getUsers(@PathVariable UUID userId) {
+    public GetUserDTO getUser(@PathVariable UUID userId) {
         return facade.getUser(userId);
     }
 
