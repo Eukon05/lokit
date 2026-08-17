@@ -12,13 +12,13 @@ import ovh.eukon05.lokit.cardservice.facade.UserFacade;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/user/{userId}/cards")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('LOKIT_ADMIN')")
 public class UserController {
     private final UserFacade userFacade;
 
-    @GetMapping("/{userId}")
+    @GetMapping
     public GetUserDTO getUser(@PathVariable UUID userId) {
         return userFacade.getUser(userId);
     }
