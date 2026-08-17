@@ -8,6 +8,9 @@ import ovh.eukon05.lokit.cardservice.exception.CardNotFoundException;
 import ovh.eukon05.lokit.cardservice.model.CardEntity;
 import ovh.eukon05.lokit.cardservice.repository.CardRepository;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
@@ -21,6 +24,11 @@ public class CardServiceImpl implements CardService {
     @Override
     public Page<CardEntity> findAll(Pageable pageable) {
         return cardRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<CardEntity> findAllById(Set<String> ids) {
+        return cardRepository.findAllById(ids);
     }
 
     @Override

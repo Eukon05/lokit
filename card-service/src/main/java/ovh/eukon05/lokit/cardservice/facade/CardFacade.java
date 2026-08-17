@@ -6,6 +6,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.cardservice.client.EventClient;
 import ovh.eukon05.lokit.cardservice.dto.request.CreateCardDTO;
+import ovh.eukon05.lokit.cardservice.dto.request.FindCardsByIdDTO;
 import ovh.eukon05.lokit.cardservice.dto.response.GetCardDTO;
 import ovh.eukon05.lokit.cardservice.mapper.CardMapper;
 import ovh.eukon05.lokit.cardservice.model.CardEntity;
@@ -18,6 +19,7 @@ import ovh.eukon05.lokit.common.event.dto.CardDisabledEventDTO;
 import ovh.eukon05.lokit.common.event.dto.CardEnabledEventDTO;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +59,9 @@ public class CardFacade {
 
     public PagedModel<GetCardDTO> findAll(Pageable pageable) {
         return new PagedModel<>(cardService.findAll(pageable).map(cardMapper::toGetCardDTO));
+    }
+
+    public List<GetCardDTO> findAllById(FindCardsByIdDTO dto) {
+        return cardService.findAllById(dto.cardIds()).stream().map(cardMapper::toGetCardDTO).toList();
     }
 }

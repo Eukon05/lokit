@@ -8,8 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.cardservice.dto.request.CreateCardDTO;
+import ovh.eukon05.lokit.cardservice.dto.request.FindCardsByIdDTO;
 import ovh.eukon05.lokit.cardservice.dto.response.GetCardDTO;
 import ovh.eukon05.lokit.cardservice.facade.CardFacade;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/card")
@@ -32,6 +35,11 @@ public class CardController {
     @GetMapping
     public PagedModel<GetCardDTO> findAll(Pageable pageable) {
         return cardFacade.findAll(pageable);
+    }
+
+    @PostMapping
+    public List<GetCardDTO> findAllById(@RequestBody @Valid FindCardsByIdDTO dto) {
+        return cardFacade.findAllById(dto);
     }
 
     @DeleteMapping("/{cardId}")

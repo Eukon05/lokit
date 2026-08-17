@@ -7,7 +7,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
-import ovh.eukon05.lokit.roleservice.dto.request.FindAllByIdDTO;
+import ovh.eukon05.lokit.roleservice.dto.request.FindRolesByIdDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
 import ovh.eukon05.lokit.roleservice.facade.RoleFacade;
 
@@ -37,7 +37,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public List<GetRoleDTO> findAllById(@RequestBody @Valid FindAllByIdDTO dto) {
+    public List<GetRoleDTO> findAllById(@RequestBody @Valid FindRolesByIdDTO dto) {
         return roleFacade.findAllById(dto);
     }
 
