@@ -8,6 +8,8 @@ import ovh.eukon05.lokit.roleservice.exception.RoleNotFoundException;
 import ovh.eukon05.lokit.roleservice.model.RoleEntity;
 import ovh.eukon05.lokit.roleservice.repository.RoleRepository;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -48,5 +50,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Page<RoleEntity> findAll(Pageable pageable) {
         return roleRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<RoleEntity> findAllById(Set<UUID> ids) {
+        return roleRepository.findAllById(ids);
     }
 }

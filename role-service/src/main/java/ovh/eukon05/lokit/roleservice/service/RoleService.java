@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ovh.eukon05.lokit.roleservice.model.RoleEntity;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface RoleService {
@@ -18,4 +20,6 @@ public interface RoleService {
     RoleEntity disableRole(UUID id);
 
     Page<RoleEntity> findAll(Pageable pageable);
+
+    List<RoleEntity> findAllById(Set<UUID> ids);
 }

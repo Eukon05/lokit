@@ -7,9 +7,11 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
+import ovh.eukon05.lokit.roleservice.dto.request.FindAllByIdDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
 import ovh.eukon05.lokit.roleservice.facade.RoleFacade;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,6 +34,11 @@ public class RoleController {
     @GetMapping
     public PagedModel<GetRoleDTO> findAll(Pageable pageable) {
         return roleFacade.findAll(pageable);
+    }
+
+    @PostMapping
+    public List<GetRoleDTO> findAllById(@RequestBody @Valid FindAllByIdDTO dto) {
+        return roleFacade.findAllById(dto);
     }
 
     @DeleteMapping("/{roleId}")

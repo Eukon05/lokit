@@ -10,12 +10,14 @@ import ovh.eukon05.lokit.common.event.dto.RoleDisabledEventDTO;
 import ovh.eukon05.lokit.common.event.dto.RoleEnabledEventDTO;
 import ovh.eukon05.lokit.roleservice.client.EventClient;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
+import ovh.eukon05.lokit.roleservice.dto.request.FindAllByIdDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
 import ovh.eukon05.lokit.roleservice.mapper.RoleMapper;
 import ovh.eukon05.lokit.roleservice.model.RoleEntity;
 import ovh.eukon05.lokit.roleservice.service.RoleService;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -56,5 +58,9 @@ public class RoleFacade {
 
     public PagedModel<GetRoleDTO> findAll(Pageable pageable) {
         return new PagedModel<>(roleService.findAll(pageable).map(roleMapper::toGetRoleDTO));
+    }
+
+    public List<GetRoleDTO> findAllById(FindAllByIdDTO dto) {
+        return roleService.findAllById(dto.cardIds()).stream().map(roleMapper::toGetRoleDTO).toList();
     }
 }
