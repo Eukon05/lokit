@@ -37,7 +37,7 @@ public class CardController {
         return cardFacade.findAll(pageable);
     }
 
-    @PostMapping
+    @PostMapping("/lookup")
     public List<GetCardDTO> findAllById(@RequestBody @Valid FindCardsByIdDTO dto) {
         return cardFacade.findAllById(dto);
     }

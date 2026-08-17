@@ -36,7 +36,7 @@ public class RoleController {
         return roleFacade.findAll(pageable);
     }
 
-    @PostMapping
+    @PostMapping("/lookup")
     public List<GetRoleDTO> findAllById(@RequestBody @Valid FindRolesByIdDTO dto) {
         return roleFacade.findAllById(dto);
     }
