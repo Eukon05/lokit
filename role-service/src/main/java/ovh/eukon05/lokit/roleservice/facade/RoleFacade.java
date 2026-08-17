@@ -61,6 +61,6 @@ public class RoleFacade {
     }
 
     public List<GetRoleDTO> findAllById(FindRolesByIdDTO dto) {
-        return roleService.findAllById(dto.cardIds()).stream().map(roleMapper::toGetRoleDTO).toList();
+        return roleService.findAllById(dto.roleIds()).stream().map(roleMapper::toGetRoleDTO).toList();
     }
 }
