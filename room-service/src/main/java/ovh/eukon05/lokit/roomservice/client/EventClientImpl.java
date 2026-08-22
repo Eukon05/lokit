@@ -38,4 +38,9 @@ public class EventClientImpl implements EventClient {
     public void sendRoomDisabledEvent(RoomDisabledEventDTO dto) {
         publisher.sendObject(ROOM_DISABLED_ROUTING_KEY, dto);
     }
+
+    @Override
+    public void sendRoomDeletedEvent(RoomDeletedEventDTO dto) {
+        publisher.sendObject(ROOM_DELETED_ROUTING_KEY, dto);
+    }
 }

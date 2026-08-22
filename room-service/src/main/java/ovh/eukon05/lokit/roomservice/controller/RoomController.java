@@ -53,4 +53,9 @@ public class RoomController {
     public GetRoomDTO disableRoom(@PathVariable UUID roomId) {
         return roomFacade.disableRoom(roomId);
     }
+
+    @DeleteMapping("/{roomId}")
+    public void deleteRoom(@PathVariable UUID roomId) {
+        roomFacade.deleteRoom(roomId);
+    }
 }

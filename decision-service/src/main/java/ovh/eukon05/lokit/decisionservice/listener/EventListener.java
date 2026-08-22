@@ -25,8 +25,8 @@ public class EventListener {
 
     @RabbitHandler
     public void receiveRoleDeletedEvent(RoleDeletedEventDTO dto) {
-        log.debug("Received role deleted event. Removing active role {}", dto.roleId());
-        decisionCache.removeActiveRole(dto.roleId());
+        log.debug("Received role deleted event. Removing role {} from cache", dto.roleId());
+        decisionCache.removeRole(dto.roleId());
     }
 
     @RabbitHandler
@@ -94,8 +94,9 @@ public class EventListener {
 
     @RabbitHandler
     public void receiveCardDisabledEvent(CardDisabledEventDTO dto) {
-        log.debug("Received card disabled event. Removing active card {}", dto.cardId());
+        log.debug("Received card disabled event. Removing active card {} and its user mapping", dto.cardId());
         decisionCache.removeActiveCard(dto.cardId());
+        decisionCache.removeCardUser(dto.cardId());
     }
 
     @RabbitHandler
@@ -145,6 +146,12 @@ public class EventListener {
     public void receiveUserDeletedEvent(UserDeletedEventDTO dto) {
         log.debug("Received user deleted event. Removing user {} roles and cards", dto.userId());
         decisionCache.removeUser(dto.userId());
+    }
+
+    @RabbitHandler
+    public void receiveRoomDeletedEvent(RoomDeletedEventDTO dto) {
+        log.debug("Received room deleted event. Removing room {} from cache", dto.roomId());
+        decisionCache.removeRoom(dto.roomId());
     }
 
 }

@@ -19,6 +19,7 @@ public final class RabbitConstants {
     public static final String ROOM_CREATED_ROUTING_KEY = "room.created";
     public static final String ROOM_ENABLED_ROUTING_KEY = "room.enabled";
     public static final String ROOM_DISABLED_ROUTING_KEY = "room.disabled";
+    public static final String ROOM_DELETED_ROUTING_KEY = "room.deleted";
     public static final String ROOM_ROLE_ASSIGNED = "room.roles.assigned";
     public static final String ROOM_ROLE_REMOVED = "room.roles.removed";
 
@@ -38,5 +39,6 @@ public final class RabbitConstants {
     public static final String ROOM_SERVICE_QUEUE = "lokit.roomservice.queue";
     public static final String ROLE_SERVICE_QUEUE = "lokit.roleservice.queue";
     public static final String CARD_SERVICE_QUEUE = "lokit.cardservice.queue";
+    public static final String DEVICE_SERVICE_QUEUE = "lokit.deviceservice.queue";
     public static final String DECISION_SERVICE_QUEUE = "lokit.decisionservice.queue";
 }

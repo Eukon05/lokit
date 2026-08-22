@@ -59,4 +59,9 @@ public class RoomFacade {
         eventClient.sendRoomDisabledEvent(new RoomDisabledEventDTO(Instant.now(), id));
         return roomMapper.toGetRoomDTO(room);
     }
+
+    public void deleteRoom(UUID id) {
+        roomService.deleteRoom(id);
+        eventClient.sendRoomDeletedEvent(new RoomDeletedEventDTO(Instant.now(), id));
+    }
 }

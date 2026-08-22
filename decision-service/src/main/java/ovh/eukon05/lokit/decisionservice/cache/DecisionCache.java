@@ -19,6 +19,8 @@ public interface DecisionCache {
 
     void removeActiveRole(UUID roleId);
 
+    void removeRole(UUID roleId);
+
     void addActiveCard(String cardId);
 
     void removeActiveCard(String cardId);
@@ -26,6 +28,8 @@ public interface DecisionCache {
     void addActiveRoom(UUID roomId);
 
     void removeActiveRoom(UUID roomId);
+
+    void removeRoom(UUID roomId);
 
     void addRoleToACL(UUID roleId, UUID roomId);
 

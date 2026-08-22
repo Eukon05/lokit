@@ -12,4 +12,6 @@ public interface EventClient {
     void sendRoomEnabledEvent(RoomEnabledEventDTO event);
 
     void sendRoomDisabledEvent(RoomDisabledEventDTO event);
+
+    void sendRoomDeletedEvent(RoomDeletedEventDTO event);
 }

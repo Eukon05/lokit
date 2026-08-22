@@ -10,4 +10,6 @@ public interface DeviceRepository extends JpaRepository<DeviceEntity, UUID> {
     List<DeviceEntity> findAllByTokenHashIsNotNull();
 
     boolean existsByPhysicalAddress(String physicalAddress);
+
+    List<DeviceEntity> findAllByRoomId(UUID roomId);
 }

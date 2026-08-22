@@ -24,4 +24,6 @@ public interface DeviceService {
     void revokeToken(UUID deviceId);
 
     Page<DeviceEntity> findAll(Pageable pageable);
+
+    void removeRoomFromAll(UUID roomId);
 }

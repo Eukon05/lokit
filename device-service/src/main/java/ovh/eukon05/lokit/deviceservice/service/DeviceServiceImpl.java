@@ -9,6 +9,7 @@ import ovh.eukon05.lokit.deviceservice.helper.DeviceTokenHelper;
 import ovh.eukon05.lokit.deviceservice.model.DeviceEntity;
 import ovh.eukon05.lokit.deviceservice.repository.DeviceRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,7 +35,8 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void deleteDevice(UUID deviceId) {
-        deviceRepository.deleteById(deviceId);
+        DeviceEntity device = findById(deviceId);
+        deviceRepository.delete(device);
     }
 
     @Override
@@ -71,5 +73,12 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Page<DeviceEntity> findAll(Pageable pageable) {
         return deviceRepository.findAll(pageable);
+    }
+
+    @Override
+    public void removeRoomFromAll(UUID roomId) {
+        List<DeviceEntity> devices = deviceRepository.findAllByRoomId(roomId);
+        devices.forEach(device -> device.setRoomId(null));
+        deviceRepository.saveAll(devices);
     }
 }

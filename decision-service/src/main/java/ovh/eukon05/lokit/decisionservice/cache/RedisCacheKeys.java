@@ -16,4 +16,7 @@ public final class RedisCacheKeys {
     public static final String REDIS_USER_ROLES_SET_KEY = "users.%s.roles";
     public static final String REDIS_USER_CARDS_SET_KEY = "users.%s.cards";
     public static final String REDIS_ROOM_ROLES_SET_KEY = "rooms.%s.roles";
+    public static final String REDIS_ROOM_DEVICES_SET_KEY = "rooms.%s.devices";
+    public static final String REDIS_ROLE_ROOMS_SET_KEY = "roles.%s.rooms";
+    public static final String REDIS_ROLE_USERS_SET_KEY = "roles.%s.users";
 }

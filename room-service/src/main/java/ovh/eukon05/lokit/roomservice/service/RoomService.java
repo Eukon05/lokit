@@ -22,4 +22,6 @@ public interface RoomService {
     RoomEntity enableRoom(UUID id);
 
     RoomEntity disableRoom(UUID id);
+
+    void deleteRoom(UUID id);
 }

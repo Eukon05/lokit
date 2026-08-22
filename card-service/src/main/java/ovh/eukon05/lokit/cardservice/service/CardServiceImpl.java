@@ -39,7 +39,8 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void deleteCard(String id) {
-        cardRepository.deleteById(id);
+        CardEntity card = findById(id);
+        cardRepository.delete(card);
     }
 
     @Override

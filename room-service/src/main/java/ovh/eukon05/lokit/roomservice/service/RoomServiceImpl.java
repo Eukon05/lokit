@@ -76,6 +76,12 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.save(room);
     }
 
+    @Override
+    public void deleteRoom(UUID id) {
+        RoomEntity room = getRoom(id);
+        roomRepository.delete(room);
+    }
+
     private RoomEntity getRoom(UUID id) {
         return roomRepository.findById(id).orElseThrow(RoomNotFoundException::new);
     }

@@ -17,10 +17,7 @@ import ovh.eukon05.lokit.decisionservice.model.DeviceState;
 import ovh.eukon05.lokit.decisionservice.model.RoomState;
 import ovh.eukon05.lokit.decisionservice.model.UserState;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ovh.eukon05.lokit.decisionservice.cache.RedisCacheKeys.*;
@@ -108,14 +105,46 @@ public class CacheWarmupListener {
         Map<String, Set<String>> roomMap = rooms.stream()
                 .collect(Collectors.toMap(room -> REDIS_ROOM_ROLES_SET_KEY.formatted(room.id()), room -> room.roles().stream().map(UUID::toString).collect(Collectors.toSet())));
 
+        Map<String, Set<String>> roomDevicesMap = devices.stream()
+                .filter(dev -> dev.roomId() != null)
+                .collect(Collectors.groupingBy(
+                        dev -> REDIS_ROOM_DEVICES_SET_KEY.formatted(dev.roomId()),
+                        Collectors.mapping(dev -> dev.id().toString(), Collectors.toSet())
+                ));
+
+        Map<String, Set<String>> roleRoomsMap = new HashMap<>();
+        for (RoomState room : rooms) {
+            for (UUID roleId : room.roles()) {
+                roleRoomsMap.computeIfAbsent(REDIS_ROLE_ROOMS_SET_KEY.formatted(roleId), ignored -> new HashSet<>())
+                        .add(room.id().toString());
+            }
+        }
+
+        Map<String, Set<String>> roleUsersMap = new HashMap<>();
+        for (UserState user : users) {
+            for (UUID roleId : user.roles()) {
+                roleUsersMap.computeIfAbsent(REDIS_ROLE_USERS_SET_KEY.formatted(roleId), ignored -> new HashSet<>())
+                        .add(user.id().toString());
+            }
+        }
+
         log.debug("Saving user-role mappings to Redis...");
         userMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
 
         log.debug("Saving user-card mappings to Redis...");
         userCardMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
 
-        log.debug("Saving room-mappings to Redis...");
+        log.debug("Saving room-role mappings to Redis...");
         roomMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
+
+        log.debug("Saving room-device reverse indexes to Redis...");
+        roomDevicesMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
+
+        log.debug("Saving role-room reverse indexes to Redis...");
+        roleRoomsMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
+
+        log.debug("Saving role-user reverse indexes to Redis...");
+        roleUsersMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
 
         log.debug("Saving device-room mappings to Redis...");
         if (!deviceMap.isEmpty()) {
