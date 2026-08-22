@@ -1,6 +1,8 @@
 package ovh.eukon05.lokit.identityservice.dto.response;
 
+import java.time.Instant;
 import java.util.UUID;
 
-public record GetUserDTO(UUID id, String firstName, String lastName, String email) {
+public record GetUserDTO(UUID id, String firstName, String lastName, String email, Instant createdAt,
+                         Instant updatedAt) {
 }
