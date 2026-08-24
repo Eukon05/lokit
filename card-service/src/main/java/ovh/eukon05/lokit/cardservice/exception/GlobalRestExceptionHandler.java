@@ -41,6 +41,13 @@ public class GlobalRestExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDTO);
     }
 
+    @ExceptionHandler(CardAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorDTO> handleCardAlreadyExists(CardAlreadyExistsException exception, HttpServletRequest request) {
+        ApiErrorDTO errorDTO = buildErrorResponse(request, HttpStatus.CONFLICT, exception.getMessage(), Collections.emptyMap());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDTO);
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiErrorDTO> handleUserNotFound(UserNotFoundException exception, HttpServletRequest request) {
         ApiErrorDTO errorDTO = buildErrorResponse(request, HttpStatus.NOT_FOUND, exception.getMessage(), Collections.emptyMap());

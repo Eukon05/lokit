@@ -56,4 +56,9 @@ public class CardServiceImpl implements CardService {
         card.setActive(false);
         cardRepository.save(card);
     }
+
+    @Override
+    public boolean cardExistsById(String id) {
+        return cardRepository.existsById(id);
+    }
 }

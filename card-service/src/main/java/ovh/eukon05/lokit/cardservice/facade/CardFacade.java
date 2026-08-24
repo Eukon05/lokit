@@ -8,6 +8,7 @@ import ovh.eukon05.lokit.cardservice.client.EventClient;
 import ovh.eukon05.lokit.cardservice.dto.request.CreateCardDTO;
 import ovh.eukon05.lokit.cardservice.dto.request.FindCardsByIdDTO;
 import ovh.eukon05.lokit.cardservice.dto.response.GetCardDTO;
+import ovh.eukon05.lokit.cardservice.exception.CardAlreadyExistsException;
 import ovh.eukon05.lokit.cardservice.mapper.CardMapper;
 import ovh.eukon05.lokit.cardservice.model.CardEntity;
 import ovh.eukon05.lokit.cardservice.model.UserEntity;
@@ -34,6 +35,9 @@ public class CardFacade {
     }
 
     public String createCard(CreateCardDTO cardDTO) {
+        if (cardService.cardExistsById(cardDTO.id()))
+            throw new CardAlreadyExistsException();
+
         UserEntity user = userService.getUser(cardDTO.userId());
         CardEntity card = cardMapper.fromCreateCardDTO(cardDTO);
         card.setUser(user);

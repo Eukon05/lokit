@@ -21,4 +21,6 @@ public interface CardService {
     CardEntity enableCard(String id);
 
     void disableCard(String id);
+
+    boolean cardExistsById(String id);
 }
