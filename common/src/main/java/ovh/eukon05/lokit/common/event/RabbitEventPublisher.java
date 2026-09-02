@@ -16,6 +16,7 @@ public class RabbitEventPublisher {
     public void sendObject(String routingKey, Object message) {
         try {
             sender.sendObject(EXCHANGE_NAME, routingKey, message);
+            logger.debug("Sent object to RabbitMQ: {}", message);
         } catch (Exception e) {
             logger.warn("Failed to send object to RabbitMQ: {}, Exception message: {}", message, e.getMessage());
         }

@@ -62,3 +62,7 @@ server:
 lokit:
   jwt:
     role-claims: ${LOKIT_JWT_ROLE_CLAIMS}
+
+logging:
+  level:
+    ovh.eukon05.lokit.roomservice: ${LOKIT_LOGGING_LEVEL:info}

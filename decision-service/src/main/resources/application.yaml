@@ -53,4 +53,4 @@ server:
 
 logging:
   level:
-    ovh.eukon05.lokit.decisionservice: debug
+    ovh.eukon05.lokit.decisionservice: ${LOKIT_LOGGING_LEVEL:info}

@@ -47,3 +47,7 @@ lokit:
     realm: ${LOKIT_KEYCLOAK_REALM}
     client-id: ${LOKIT_KEYCLOAK_CLIENT_ID}
     client-secret: ${LOKIT_KEYCLOAK_CLIENT_SECRET}
+
+logging:
+  level:
+    ovh.eukon05.lokit.identityservice: ${LOKIT_LOGGING_LEVEL:info}
