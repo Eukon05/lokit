@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.common.event.dto.*;
 import ovh.eukon05.lokit.roomservice.client.EventClient;
 import ovh.eukon05.lokit.roomservice.dto.request.CreateRoomDTO;
+import ovh.eukon05.lokit.roomservice.dto.request.UpdateRoomDTO;
 import ovh.eukon05.lokit.roomservice.dto.response.GetRoomDTO;
 import ovh.eukon05.lokit.roomservice.mapper.RoomMapper;
 import ovh.eukon05.lokit.roomservice.model.RoomEntity;
@@ -63,5 +64,12 @@ public class RoomFacade {
     public void deleteRoom(UUID id) {
         roomService.deleteRoom(id);
         eventClient.sendRoomDeletedEvent(new RoomDeletedEventDTO(Instant.now(), id));
+    }
+
+    public void updateRoom(UUID id, UpdateRoomDTO dto) {
+        RoomEntity entity = roomService.findById(id);
+        dto.name().ifPresent(entity::setName);
+        dto.description().ifPresent(entity::setDescription);
+        roomService.saveRoom(entity);
     }
 }

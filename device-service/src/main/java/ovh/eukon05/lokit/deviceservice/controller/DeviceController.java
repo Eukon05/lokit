@@ -7,6 +7,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.deviceservice.dto.request.CreateDeviceDTO;
+import ovh.eukon05.lokit.deviceservice.dto.request.UpdateDeviceDTO;
 import ovh.eukon05.lokit.deviceservice.dto.response.GetDeviceDTO;
 import ovh.eukon05.lokit.deviceservice.facade.DeviceFacade;
 
@@ -57,5 +58,10 @@ public class DeviceController {
     @DeleteMapping("/{deviceId}/token")
     public void revokeToken(@PathVariable UUID deviceId) {
         deviceFacade.revokeToken(deviceId);
+    }
+
+    @PutMapping("/{deviceId}")
+    public void updateDevice(@PathVariable UUID deviceId, @RequestBody UpdateDeviceDTO dto) {
+        deviceFacade.updateDevice(deviceId, dto);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.request.FindRolesByIdDTO;
+import ovh.eukon05.lokit.roleservice.dto.request.UpdateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
 import ovh.eukon05.lokit.roleservice.facade.RoleFacade;
 
@@ -54,5 +55,10 @@ public class RoleController {
     @PostMapping("/{roleId}/disable")
     public GetRoleDTO disableRole(@PathVariable UUID roleId) {
         return roleFacade.disableRole(roleId);
+    }
+
+    @PutMapping("/{roleId}")
+    public void updateRole(@PathVariable UUID roleId, @RequestBody UpdateRoleDTO dto) {
+        roleFacade.updateRole(roleId, dto);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.roomservice.dto.request.CreateRoomDTO;
+import ovh.eukon05.lokit.roomservice.dto.request.UpdateRoomDTO;
 import ovh.eukon05.lokit.roomservice.dto.response.GetRoomDTO;
 import ovh.eukon05.lokit.roomservice.facade.RoomFacade;
 
@@ -57,5 +58,10 @@ public class RoomController {
     @DeleteMapping("/{roomId}")
     public void deleteRoom(@PathVariable UUID roomId) {
         roomFacade.deleteRoom(roomId);
+    }
+
+    @PutMapping("/{roomId}")
+    public void updateRoom(@PathVariable UUID roomId, @RequestBody UpdateRoomDTO dto) {
+        roomFacade.updateRoom(roomId, dto);
     }
 }

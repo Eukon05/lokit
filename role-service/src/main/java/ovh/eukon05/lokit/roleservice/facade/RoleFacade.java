@@ -11,6 +11,7 @@ import ovh.eukon05.lokit.common.event.dto.RoleEnabledEventDTO;
 import ovh.eukon05.lokit.roleservice.client.EventClient;
 import ovh.eukon05.lokit.roleservice.dto.request.CreateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.request.FindRolesByIdDTO;
+import ovh.eukon05.lokit.roleservice.dto.request.UpdateRoleDTO;
 import ovh.eukon05.lokit.roleservice.dto.response.GetRoleDTO;
 import ovh.eukon05.lokit.roleservice.mapper.RoleMapper;
 import ovh.eukon05.lokit.roleservice.model.RoleEntity;
@@ -62,5 +63,12 @@ public class RoleFacade {
 
     public List<GetRoleDTO> findAllById(FindRolesByIdDTO dto) {
         return roleService.findAllById(dto.roleIds()).stream().map(roleMapper::toGetRoleDTO).toList();
+    }
+
+    public void updateRole(UUID id, UpdateRoleDTO dto) {
+        RoleEntity entity = roleService.findById(id);
+        dto.name().ifPresent(entity::setName);
+        dto.description().ifPresent(entity::setDescription);
+        roleService.saveRole(entity);
     }
 }

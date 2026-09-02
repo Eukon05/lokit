@@ -8,6 +8,7 @@ import ovh.eukon05.lokit.common.event.dto.*;
 import ovh.eukon05.lokit.deviceservice.client.EventClient;
 import ovh.eukon05.lokit.deviceservice.client.RoomClient;
 import ovh.eukon05.lokit.deviceservice.dto.request.CreateDeviceDTO;
+import ovh.eukon05.lokit.deviceservice.dto.request.UpdateDeviceDTO;
 import ovh.eukon05.lokit.deviceservice.dto.response.GetDeviceDTO;
 import ovh.eukon05.lokit.deviceservice.exception.DeviceAlreadyExistsException;
 import ovh.eukon05.lokit.deviceservice.exception.RoomNotFoundException;
@@ -72,6 +73,13 @@ public class DeviceFacade {
 
     public PagedModel<GetDeviceDTO> findAll(Pageable pageable) {
         return new PagedModel<>(deviceService.findAll(pageable).map(deviceMapper::toGetDeviceDTO));
+    }
+
+    public void updateDevice(UUID cardId, UpdateDeviceDTO dto) {
+        DeviceEntity entity = deviceService.findById(cardId);
+        dto.name().ifPresent(entity::setName);
+        dto.description().ifPresent(entity::setDescription);
+        deviceService.saveDevice(entity);
     }
 
     private void validateRoom(UUID roomId) {

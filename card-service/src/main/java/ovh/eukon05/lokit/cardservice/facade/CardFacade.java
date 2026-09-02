@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.cardservice.client.EventClient;
 import ovh.eukon05.lokit.cardservice.dto.request.CreateCardDTO;
 import ovh.eukon05.lokit.cardservice.dto.request.FindCardsByIdDTO;
+import ovh.eukon05.lokit.cardservice.dto.request.UpdateCardDTO;
 import ovh.eukon05.lokit.cardservice.dto.response.GetCardDTO;
 import ovh.eukon05.lokit.cardservice.exception.CardAlreadyExistsException;
 import ovh.eukon05.lokit.cardservice.mapper.CardMapper;
@@ -67,5 +68,11 @@ public class CardFacade {
 
     public List<GetCardDTO> findAllById(FindCardsByIdDTO dto) {
         return cardService.findAllById(dto.cardIds()).stream().map(cardMapper::toGetCardDTO).toList();
+    }
+
+    public void updateCard(String cardId, UpdateCardDTO dto) {
+        CardEntity entity = cardService.findById(cardId);
+        entity.setName(dto.name());
+        cardService.saveCard(entity);
     }
 }

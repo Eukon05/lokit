@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.cardservice.dto.request.CreateCardDTO;
 import ovh.eukon05.lokit.cardservice.dto.request.FindCardsByIdDTO;
+import ovh.eukon05.lokit.cardservice.dto.request.UpdateCardDTO;
 import ovh.eukon05.lokit.cardservice.dto.response.GetCardDTO;
 import ovh.eukon05.lokit.cardservice.facade.CardFacade;
 
@@ -55,5 +56,10 @@ public class CardController {
     @PostMapping("/{cardId}/disable")
     public void disableCard(@PathVariable String cardId) {
         cardFacade.disableCard(cardId);
+    }
+
+    @PutMapping("/{cardId}")
+    public void updateCard(@PathVariable String cardId, @RequestBody UpdateCardDTO dto) {
+        cardFacade.updateCard(cardId, dto);
     }
 }
