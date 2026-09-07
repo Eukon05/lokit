@@ -50,6 +50,17 @@ services:
     restart:
       on-failure
 
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - ${LOKIT_MOSQUITTO_PORT:-1883}:1883
+    volumes:
+      - lokit-mosquitto-vol:/mosquitto
+    networks:
+      - lokit-internal
+    restart:
+      on-failure
+
   redis:
     image: redis:latest
     networks:
@@ -239,6 +250,8 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_started
+      mosquitto:
+        condition: service_started
       postgres:
         condition: service_healthy
       room-service:
@@ -261,6 +274,10 @@ services:
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
       LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
+      LOKIT_DEVICE_MQTT_URL: tcp://mosquitto:1883
+      LOKIT_DEVICE_MQTT_CLIENT_ID: device-service
+      LOKIT_DEVICE_MQTT_USERNAME: ${LOKIT_DEVICE_MQTT_USERNAME:?error}
+      LOKIT_DEVICE_MQTT_PASSWORD: ${LOKIT_DEVICE_MQTT_PASSWORD:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
       on-failure
@@ -312,3 +329,4 @@ networks:
 volumes:
   lokit-db-vol:
   lokit-keycloak-vol:
+  lokit-mosquitto-vol:

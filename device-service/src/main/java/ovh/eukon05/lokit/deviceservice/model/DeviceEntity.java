@@ -40,6 +40,8 @@ public class DeviceEntity {
     @UpdateTimestamp
     private Instant updatedAt;
 
+    private Instant lastSeenAt;
+
     @Size(max = 64)
     private String tokenHash;
 }
