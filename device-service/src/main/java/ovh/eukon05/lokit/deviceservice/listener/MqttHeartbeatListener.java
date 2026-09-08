@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.deviceservice.dto.response.DeviceHeartbeatDTO;
+import ovh.eukon05.lokit.deviceservice.messages.in.DeviceHeartbeatMessage;
 import ovh.eukon05.lokit.deviceservice.service.DeviceService;
 import tools.jackson.databind.ObjectMapper;
 
@@ -18,7 +18,7 @@ public class MqttHeartbeatListener implements IMqttMessageListener {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) {
-        DeviceHeartbeatDTO dto = mapper.readValue(message.getPayload(), DeviceHeartbeatDTO.class);
+        DeviceHeartbeatMessage dto = mapper.readValue(message.getPayload(), DeviceHeartbeatMessage.class);
         service.updateLastSeen(dto.physicalAddress(), dto.timestamp());
         log.debug("Received heartbeat message from device with MAC: {}", dto.physicalAddress());
     }
