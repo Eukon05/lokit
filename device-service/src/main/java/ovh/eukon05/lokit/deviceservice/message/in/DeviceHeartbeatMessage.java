@@ -1,4 +1,4 @@
-package ovh.eukon05.lokit.deviceservice.messages.in;
+package ovh.eukon05.lokit.deviceservice.message.in;
 
 import java.time.Instant;
 

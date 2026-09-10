@@ -17,17 +17,18 @@ else
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec createClient "$SERVICE_USERNAME" -i "$SERVICE_CLIENT_ID"
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec setClientPassword "$SERVICE_USERNAME" "$SERVICE_PASSWORD"
 
-  #Create dynsec-admin role
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec createRole dynsec-admin
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL dynsec-admin publishClientSend '$CONTROL/dynamic-security/#' allow -1
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL dynsec-admin publishClientReceive '$CONTROL/dynamic-security/#' allow -1
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL dynsec-admin subscribeLiteral '$CONTROL/dynamic-security/#' allow -1
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL dynsec-admin subscribePattern '$CONTROL/dynamic-security/#' allow -1
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL dynsec-admin unsubscribeLiteral '$CONTROL/dynamic-security/#' allow -1
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL dynsec-admin unsubscribePattern '$CONTROL/dynamic-security/#' allow -1
+  #Create lokit-service role
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec createRole lokit-service
 
-  #Assign dynsec-admin to device-service
-  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addClientRole "$SERVICE_USERNAME" dynsec-admin 5
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service publishClientSend '$CONTROL/dynamic-security/#' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service subscribeLiteral '$CONTROL/dynamic-security/#' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service unsubscribeLiteral '$CONTROL/dynamic-security/#' allow -1
+
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service subscribeLiteral 'lokit/devices/heartbeat' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service unsubscribeLiteral 'lokit/devices/heartbeat' allow -1
+
+  #Assign role to device-service
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addClientRole "$SERVICE_USERNAME" lokit-service 5
 
   #Create lokit-device role
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec createRole lokit-device
