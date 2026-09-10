@@ -52,14 +52,31 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto
+    user: mosquitto
     ports:
       - ${LOKIT_MOSQUITTO_PORT:-1883}:1883
+    environment:
+      LOKIT_MOSQUITTO_ADMIN_USERNAME: ${LOKIT_MOSQUITTO_ADMIN_USERNAME:-admin}
+      LOKIT_MOSQUITTO_ADMIN_PASSWORD: ${LOKIT_MOSQUITTO_ADMIN_PASSWORD:-admin}
     volumes:
-      - lokit-mosquitto-vol:/mosquitto
+      - ./docker/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./docker/mosquitto/init.sh:/mosquitto/init.sh:ro
+      - ./docker/mosquitto/dynsec-init.sh:/mosquitto/dynsec-init.sh:ro
+      - lokit-mosquitto-vol:/mosquitto/data
     networks:
       - lokit-internal
     restart:
       on-failure
+    pre_start:
+      - command: ./mosquitto/init.sh
+        user: mosquitto
+    post_start:
+      - command: ./mosquitto/dynsec-init.sh
+        user: mosquitto
+        environment:
+          LOKIT_DEVICE_MQTT_CLIENT_ID: ${LOKIT_DEVICE_MQTT_CLIENT_ID:?error}
+          LOKIT_DEVICE_MQTT_USERNAME: ${LOKIT_DEVICE_MQTT_USERNAME:?error}
+          LOKIT_DEVICE_MQTT_PASSWORD: ${LOKIT_DEVICE_MQTT_PASSWORD:?error}
 
   redis:
     image: redis:latest
