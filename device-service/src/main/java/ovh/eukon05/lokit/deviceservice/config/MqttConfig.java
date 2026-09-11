@@ -26,7 +26,7 @@ public class MqttConfig {
         options.setAutomaticReconnect(true);
 
         client.connect(options).waitForCompletion();
-        client.subscribe("lokit/devices/heartbeat", 1, heartbeatListener).waitForCompletion();
+        client.subscribe("lokit/devices/+/heartbeat", 1, heartbeatListener).waitForCompletion();
 
         return client;
     }
