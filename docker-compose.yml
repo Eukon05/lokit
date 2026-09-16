@@ -2,11 +2,10 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - ${LOKIT_NGINX_PORT:-80}:80
-    environment:
-      LOKIT_NGINX_HOST: ${LOKIT_NGINX_HOST:?error}
+      - ${LOKIT_NGINX_HTTP_PORT:-80}:80
+      - ${LOKIT_NGINX_MQTT_PORT:-1883}:1883
     volumes:
-      - ./docker/nginx/default.conf.template:/etc/nginx/templates/default.conf.template
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
     networks:
       - lokit-internal
     depends_on:
@@ -16,6 +15,7 @@ services:
       - device-service
       - card-service
       - decision-service
+      - mosquitto
     restart:
       on-failure
 
@@ -53,8 +53,6 @@ services:
   mosquitto:
     image: eclipse-mosquitto
     user: mosquitto
-    ports:
-      - ${LOKIT_MOSQUITTO_PORT:-1883}:1883
     environment:
       LOKIT_MOSQUITTO_ADMIN_USERNAME: ${LOKIT_MOSQUITTO_ADMIN_USERNAME:-admin}
       LOKIT_MOSQUITTO_ADMIN_PASSWORD: ${LOKIT_MOSQUITTO_ADMIN_PASSWORD:-admin}
