@@ -9,7 +9,9 @@ import ovh.eukon05.lokit.deviceservice.helper.DeviceTokenHelper;
 import ovh.eukon05.lokit.deviceservice.model.DeviceEntity;
 import ovh.eukon05.lokit.deviceservice.repository.DeviceRepository;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -80,5 +82,14 @@ public class DeviceServiceImpl implements DeviceService {
         List<DeviceEntity> devices = deviceRepository.findAllByRoomId(roomId);
         devices.forEach(device -> device.setRoomId(null));
         deviceRepository.saveAll(devices);
+    }
+
+    @Override
+    public void updateLastSeen(String physicalAddress, Instant lastSeenAt) {
+        Optional<DeviceEntity> device = deviceRepository.findByPhysicalAddress(physicalAddress);
+        device.ifPresent(deviceEntity -> {
+            deviceEntity.setLastSeenAt(lastSeenAt);
+            deviceRepository.save(deviceEntity);
+        });
     }
 }

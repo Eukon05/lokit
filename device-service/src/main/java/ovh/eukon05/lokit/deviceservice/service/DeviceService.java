@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ovh.eukon05.lokit.deviceservice.model.DeviceEntity;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public interface DeviceService {
@@ -26,4 +27,6 @@ public interface DeviceService {
     Page<DeviceEntity> findAll(Pageable pageable);
 
     void removeRoomFromAll(UUID roomId);
+
+    void updateLastSeen(String physicalAddress, Instant lastSeenAt);
 }

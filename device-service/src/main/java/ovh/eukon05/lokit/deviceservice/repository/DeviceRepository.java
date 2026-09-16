@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ovh.eukon05.lokit.deviceservice.model.DeviceEntity;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface DeviceRepository extends JpaRepository<DeviceEntity, UUID> {
@@ -12,4 +13,6 @@ public interface DeviceRepository extends JpaRepository<DeviceEntity, UUID> {
     boolean existsByPhysicalAddress(String physicalAddress);
 
     List<DeviceEntity> findAllByRoomId(UUID roomId);
+
+    Optional<DeviceEntity> findByPhysicalAddress(String physicalAddress);
 }

@@ -60,6 +60,11 @@ server:
 lokit:
   jwt:
     role-claims: ${LOKIT_JWT_ROLE_CLAIMS}
+  mqtt:
+    server-url: ${LOKIT_DEVICE_MQTT_URL}
+    client-id: ${LOKIT_DEVICE_MQTT_CLIENT_ID}
+    username: ${LOKIT_DEVICE_MQTT_USERNAME}
+    password: ${LOKIT_DEVICE_MQTT_PASSWORD}
 
 logging:
   level:

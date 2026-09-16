@@ -4,5 +4,5 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record GetDeviceDTO(UUID id, String name, String description, String physicalAddress, boolean hasActiveToken,
-                           UUID roomId, Instant createdAt, Instant updatedAt) {
+                           UUID roomId, Instant createdAt, Instant updatedAt, Instant lastSeenAt) {
 }

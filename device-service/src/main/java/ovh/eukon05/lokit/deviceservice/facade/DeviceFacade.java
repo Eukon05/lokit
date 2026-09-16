@@ -6,6 +6,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import ovh.eukon05.lokit.common.event.dto.*;
 import ovh.eukon05.lokit.deviceservice.client.EventClient;
+import ovh.eukon05.lokit.deviceservice.client.MqttDynsecClient;
 import ovh.eukon05.lokit.deviceservice.client.RoomClient;
 import ovh.eukon05.lokit.deviceservice.dto.request.CreateDeviceDTO;
 import ovh.eukon05.lokit.deviceservice.dto.request.UpdateDeviceDTO;
@@ -26,6 +27,7 @@ public class DeviceFacade {
     private final DeviceService deviceService;
     private final RoomClient roomClient;
     private final EventClient eventClient;
+    private final MqttDynsecClient dynsecClient;
     private final DeviceMapper deviceMapper;
 
     public GetDeviceDTO getDevice(UUID id) {
@@ -39,12 +41,15 @@ public class DeviceFacade {
         DeviceEntity device = deviceMapper.fromCreateDeviceDTO(deviceDTO);
         UUID id = deviceService.saveDevice(device);
         eventClient.sendDeviceCreatedEvent(new DeviceCreatedEventDTO(Instant.now(), id));
+        dynsecClient.createClient(deviceDTO.physicalAddress(), deviceDTO.physicalAddress());
         return id;
     }
 
     public void deleteDevice(UUID id) {
+        String physicalAddress = deviceService.findById(id).getPhysicalAddress();
         deviceService.deleteDevice(id);
         eventClient.sendDeviceDeletedEvent(new DeviceDeletedEventDTO(Instant.now(), id));
+        dynsecClient.deleteClient(physicalAddress);
     }
 
     public GetDeviceDTO assignRoom(UUID deviceId, UUID roomId) {
@@ -61,14 +66,19 @@ public class DeviceFacade {
     }
 
     public String assignToken(UUID id) {
+        String physicalAddress = deviceService.findById(id).getPhysicalAddress();
         String token = deviceService.assignToken(id);
         eventClient.sendDeviceTokenAssignedEvent(new DeviceTokenAssignedEventDTO(Instant.now(), id, DeviceTokenHelper.generateHash(token)));
+        dynsecClient.setClientPassword(physicalAddress, token);
+        dynsecClient.enableClient(physicalAddress);
         return token;
     }
 
     public void revokeToken(UUID id) {
+        String physicalAddress = deviceService.findById(id).getPhysicalAddress();
         deviceService.revokeToken(id);
         eventClient.sendDeviceTokenRevokedEvent(new DeviceTokenRevokedEventDTO(Instant.now(), id));
+        dynsecClient.disableClient(physicalAddress);
     }
 
     public PagedModel<GetDeviceDTO> findAll(Pageable pageable) {
