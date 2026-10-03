@@ -3,6 +3,7 @@ package ovh.eukon05.lokit.deviceservice.mapper;
 import org.mapstruct.*;
 import ovh.eukon05.lokit.deviceservice.dto.request.SendDeviceCommandDTO;
 import ovh.eukon05.lokit.deviceservice.dto.response.GetDeviceCommandDTO;
+import ovh.eukon05.lokit.deviceservice.message.device.out.DeviceCommandMessage;
 import ovh.eukon05.lokit.deviceservice.model.DeviceCommandEntity;
 
 import java.time.Instant;
@@ -14,6 +15,8 @@ public interface DeviceCommandMapper {
     @Mapping(source = "device.id", target = "deviceId")
     @Mapping(source = "command", target = "type")
     GetDeviceCommandDTO toGetDeviceCommandDTO(DeviceCommandEntity command);
+
+    DeviceCommandMessage toDeviceCommandMessage(DeviceCommandEntity command);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "device", ignore = true)

@@ -72,7 +72,7 @@ public class DeviceController {
         return deviceFacade.getDeviceCommands(deviceId, pageable);
     }
 
-    @PostMapping("/{deviceId}/commands}")
+    @PostMapping("/{deviceId}/commands")
     public UUID sendDeviceCommand(@PathVariable UUID deviceId, @RequestBody SendDeviceCommandDTO dto) {
         return deviceFacade.sendDeviceCommand(deviceId, dto);
     }
