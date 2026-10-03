@@ -7,7 +7,9 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ovh.eukon05.lokit.deviceservice.dto.request.CreateDeviceDTO;
+import ovh.eukon05.lokit.deviceservice.dto.request.SendDeviceCommandDTO;
 import ovh.eukon05.lokit.deviceservice.dto.request.UpdateDeviceDTO;
+import ovh.eukon05.lokit.deviceservice.dto.response.GetDeviceCommandDTO;
 import ovh.eukon05.lokit.deviceservice.dto.response.GetDeviceDTO;
 import ovh.eukon05.lokit.deviceservice.facade.DeviceFacade;
 
@@ -63,5 +65,15 @@ public class DeviceController {
     @PutMapping("/{deviceId}")
     public void updateDevice(@PathVariable UUID deviceId, @RequestBody UpdateDeviceDTO dto) {
         deviceFacade.updateDevice(deviceId, dto);
+    }
+
+    @GetMapping("/{deviceId}/commands")
+    public PagedModel<GetDeviceCommandDTO> getDeviceCommands(@PathVariable UUID deviceId, Pageable pageable) {
+        return deviceFacade.getDeviceCommands(deviceId, pageable);
+    }
+
+    @PostMapping("/{deviceId}/commands}")
+    public UUID sendDeviceCommand(@PathVariable UUID deviceId, @RequestBody SendDeviceCommandDTO dto) {
+        return deviceFacade.sendDeviceCommand(deviceId, dto);
     }
 }

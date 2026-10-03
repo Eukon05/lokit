@@ -1,6 +1,7 @@
 package ovh.eukon05.lokit.deviceservice.facade;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
@@ -9,13 +10,18 @@ import ovh.eukon05.lokit.deviceservice.client.EventClient;
 import ovh.eukon05.lokit.deviceservice.client.MqttDynsecClient;
 import ovh.eukon05.lokit.deviceservice.client.RoomClient;
 import ovh.eukon05.lokit.deviceservice.dto.request.CreateDeviceDTO;
+import ovh.eukon05.lokit.deviceservice.dto.request.SendDeviceCommandDTO;
 import ovh.eukon05.lokit.deviceservice.dto.request.UpdateDeviceDTO;
+import ovh.eukon05.lokit.deviceservice.dto.response.GetDeviceCommandDTO;
 import ovh.eukon05.lokit.deviceservice.dto.response.GetDeviceDTO;
 import ovh.eukon05.lokit.deviceservice.exception.DeviceAlreadyExistsException;
 import ovh.eukon05.lokit.deviceservice.exception.RoomNotFoundException;
 import ovh.eukon05.lokit.deviceservice.helper.DeviceTokenHelper;
+import ovh.eukon05.lokit.deviceservice.mapper.DeviceCommandMapper;
 import ovh.eukon05.lokit.deviceservice.mapper.DeviceMapper;
+import ovh.eukon05.lokit.deviceservice.model.DeviceCommandEntity;
 import ovh.eukon05.lokit.deviceservice.model.DeviceEntity;
+import ovh.eukon05.lokit.deviceservice.service.DeviceCommandService;
 import ovh.eukon05.lokit.deviceservice.service.DeviceService;
 
 import java.time.Instant;
@@ -25,10 +31,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DeviceFacade {
     private final DeviceService deviceService;
+    private final DeviceCommandService deviceCommandService;
     private final RoomClient roomClient;
     private final EventClient eventClient;
     private final MqttDynsecClient dynsecClient;
     private final DeviceMapper deviceMapper;
+    private final DeviceCommandMapper deviceCommandMapper;
 
     public GetDeviceDTO getDevice(UUID id) {
         return deviceMapper.toGetDeviceDTO(deviceService.findById(id));
@@ -90,6 +98,19 @@ public class DeviceFacade {
         dto.name().ifPresent(entity::setName);
         dto.description().ifPresent(entity::setDescription);
         deviceService.saveDevice(entity);
+    }
+
+    public PagedModel<GetDeviceCommandDTO> getDeviceCommands(UUID deviceId, Pageable pageable) {
+        deviceService.findById(deviceId);
+        Page<DeviceCommandEntity> commands = deviceCommandService.findAllByDeviceId(deviceId, pageable);
+        return new PagedModel<>(commands.map(deviceCommandMapper::toGetDeviceCommandDTO));
+    }
+
+    public UUID sendDeviceCommand(UUID deviceId, SendDeviceCommandDTO dto) {
+        DeviceEntity device = deviceService.findById(deviceId);
+        DeviceCommandEntity command = deviceCommandMapper.fromSendDeviceCommandDTO(dto);
+        command.setDevice(device);
+        return deviceCommandService.saveCommand(command);
     }
 
     private void validateRoom(UUID roomId) {
