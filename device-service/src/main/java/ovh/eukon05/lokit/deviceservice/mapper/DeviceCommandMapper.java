@@ -31,4 +31,8 @@ public interface DeviceCommandMapper {
         command.setIssuedAt(now);
         command.setExpiresAt(now.plus(5, ChronoUnit.MINUTES));
     }
+
+    default long toEpochSecond(Instant instant) {
+        return instant.getEpochSecond();
+    }
 }

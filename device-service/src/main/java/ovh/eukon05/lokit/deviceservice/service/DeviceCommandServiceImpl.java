@@ -28,7 +28,7 @@ public class DeviceCommandServiceImpl implements DeviceCommandService {
 
     @Override
     public Page<DeviceCommandEntity> findAllByDeviceId(UUID deviceId, Pageable pageable) {
-        return repository.findAllByDevice_Id(deviceId, pageable);
+        return repository.findAllByDevice_IdOrderByIssuedAtDesc(deviceId, pageable);
     }
 
     @Override

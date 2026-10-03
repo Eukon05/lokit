@@ -8,5 +8,5 @@ import ovh.eukon05.lokit.deviceservice.model.DeviceCommandEntity;
 import java.util.UUID;
 
 public interface DeviceCommandRepository extends JpaRepository<DeviceCommandEntity, UUID> {
-    Page<DeviceCommandEntity> findAllByDevice_Id(UUID deviceId, Pageable pageable);
+    Page<DeviceCommandEntity> findAllByDevice_IdOrderByIssuedAtDesc(UUID deviceId, Pageable pageable);
 }
