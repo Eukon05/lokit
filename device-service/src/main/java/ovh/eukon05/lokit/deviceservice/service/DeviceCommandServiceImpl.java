@@ -33,6 +33,8 @@ public class DeviceCommandServiceImpl implements DeviceCommandService {
 
     @Override
     public void updateCommandStatus(UUID commandId, DeviceCommandStatus status) {
-
+        DeviceCommandEntity command = findById(commandId);
+        command.setStatus(status);
+        repository.save(command);
     }
 }

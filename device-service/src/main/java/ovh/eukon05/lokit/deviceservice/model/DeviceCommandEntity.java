@@ -23,6 +23,7 @@ public class DeviceCommandEntity {
     private DeviceCommandStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "device_id", nullable = false)
     private DeviceEntity device;
 
     private Instant issuedAt;

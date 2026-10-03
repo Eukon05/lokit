@@ -46,6 +46,6 @@ public class DeviceEntity {
     @Size(max = 64)
     private String tokenHash;
 
-    @OneToMany(mappedBy = "LOKIT_DEVICE", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<DeviceCommandEntity> commands;
 }

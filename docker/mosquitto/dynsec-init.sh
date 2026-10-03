@@ -27,12 +27,19 @@ else
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service subscribePattern 'lokit/devices/+/heartbeat' allow -1
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service unsubscribePattern 'lokit/devices/+/heartbeat' allow -1
 
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service publishClientSend 'lokit/devices/+/command' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service subscribePattern 'lokit/devices/+/response' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-service unsubscribePattern 'lokit/devices/+/response' allow -1
+
   #Assign role to device-service
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addClientRole "$SERVICE_USERNAME" lokit-service 5
 
   #Create lokit-device role
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec createRole lokit-device
   mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-device publishClientSend 'lokit/devices/%u/heartbeat' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-device publishClientSend 'lokit/devices/%u/response' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-device subscribePattern 'lokit/devices/%u/command' allow -1
+  mosquitto_ctrl -u "$ADMIN_USERNAME" -P "$ADMIN_PASSWORD" dynsec addRoleACL lokit-device unsubscribePattern 'lokit/devices/%u/command' allow -1
 
   echo "Dynamic security setup complete"
 fi
