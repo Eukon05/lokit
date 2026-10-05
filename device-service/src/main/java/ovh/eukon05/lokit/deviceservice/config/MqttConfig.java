@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ovh.eukon05.lokit.deviceservice.listener.MqttDeviceResponseListener;
 import ovh.eukon05.lokit.deviceservice.listener.MqttHeartbeatListener;
 
 @Configuration
@@ -15,6 +16,7 @@ import ovh.eukon05.lokit.deviceservice.listener.MqttHeartbeatListener;
 @EnableConfigurationProperties(LokitMqttProperties.class)
 public class MqttConfig {
     private final MqttHeartbeatListener heartbeatListener;
+    private final MqttDeviceResponseListener deviceResponseListener;
 
     @Bean
     public IMqttAsyncClient mqttAsyncClient(LokitMqttProperties properties) throws MqttException {
@@ -27,6 +29,7 @@ public class MqttConfig {
 
         client.connect(options).waitForCompletion();
         client.subscribe("lokit/devices/+/heartbeat", 1, heartbeatListener).waitForCompletion();
+        client.subscribe("lokit/devices/+/response", 1, deviceResponseListener).waitForCompletion();
 
         return client;
     }

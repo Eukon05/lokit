@@ -6,7 +6,7 @@ import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.stereotype.Service;
-import ovh.eukon05.lokit.deviceservice.message.out.*;
+import ovh.eukon05.lokit.deviceservice.message.dynsec.*;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -23,31 +23,31 @@ public class MqttDynsecClientImpl implements MqttDynsecClient {
 
     @Override
     public void createClient(String clientId, String username) {
-        publish(new CreateMqttClientMessage(clientId, username), username);
+        publish(new CreateDynsecClientMessage(clientId, username), username);
     }
 
     @Override
     public void setClientPassword(String username, String password) {
-        publish(new SetMqttClientPasswordMessage(username, password), username);
+        publish(new SetDynsecClientPasswordMessage(username, password), username);
     }
 
     @Override
     public void enableClient(String username) {
-        publish(new EnableMqttClientMessage(username), username);
+        publish(new EnableDynsecClientMessage(username), username);
     }
 
     @Override
     public void disableClient(String username) {
-        publish(new DisableMqttClientMessage(username), username);
+        publish(new DisableDynsecClientMessage(username), username);
     }
 
     @Override
     public void deleteClient(String username) {
-        publish(new DeleteMqttClientMessage(username), username);
+        publish(new DeleteDynsecClientMessage(username), username);
     }
 
-    private void publish(AbstractMqttCommandMessage command, String username) {
-        MqttCommandsMessage payload = new MqttCommandsMessage(List.of(command));
+    private void publish(AbstractDynsecCommandMessage command, String username) {
+        DynsecCommandsMessage payload = new DynsecCommandsMessage(List.of(command));
         try {
             byte[] payloadBytes = mapper.writeValueAsBytes(payload);
             MqttMessage mqttMessage = new MqttMessage(payloadBytes);
