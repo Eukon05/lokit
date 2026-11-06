@@ -35,17 +35,17 @@ spring:
     bundle:
       jks:
         lokit-card-server-ssl:
-          keystore.location: classpath:card-server-keystore.p12
+          keystore.location: file://${LOKIT_CARD_TLS_SERVER_KEYSTORE_PATH}
           keystore.password: ${LOKIT_CARD_TLS_SERVER_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
-          truststore.location: classpath:card-server-truststore.p12
+          truststore.location: file://${LOKIT_CARD_TLS_SERVER_TRUSTSTORE_PATH}
           truststore.password: ${LOKIT_CARD_TLS_SERVER_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
         lokit-card-client-ssl:
-          keystore.location: classpath:card-client-keystore.p12
+          keystore.location: file://${LOKIT_CARD_TLS_CLIENT_KEYSTORE_PATH}
           keystore.password: ${LOKIT_CARD_TLS_CLIENT_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
-          truststore.location: classpath:card-client-truststore.p12
+          truststore.location: file://${LOKIT_CARD_TLS_CLIENT_TRUSTSTORE_PATH}
           truststore.password: ${LOKIT_CARD_TLS_CLIENT_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
 

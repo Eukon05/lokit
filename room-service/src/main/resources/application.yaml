@@ -29,17 +29,17 @@ spring:
     bundle:
       jks:
         lokit-room-server-ssl:
-          keystore.location: classpath:room-server-keystore.p12
+          keystore.location: file://${LOKIT_ROOM_TLS_SERVER_KEYSTORE_PATH}
           keystore.password: ${LOKIT_ROOM_TLS_SERVER_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
-          truststore.location: classpath:room-server-truststore.p12
+          truststore.location: file://${LOKIT_ROOM_TLS_SERVER_TRUSTSTORE_PATH}
           truststore.password: ${LOKIT_ROOM_TLS_SERVER_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
         lokit-room-client-ssl:
-          keystore.location: classpath:room-client-keystore.p12
+          keystore.location: file://${LOKIT_ROOM_TLS_CLIENT_KEYSTORE_PATH}
           keystore.password: ${LOKIT_ROOM_TLS_CLIENT_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
-          truststore.location: classpath:room-client-truststore.p12
+          truststore.location: file://${LOKIT_ROOM_TLS_CLIENT_TRUSTSTORE_PATH}
           truststore.password: ${LOKIT_ROOM_TLS_CLIENT_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
 
