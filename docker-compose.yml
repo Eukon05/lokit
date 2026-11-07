@@ -2,10 +2,13 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - ${LOKIT_NGINX_HTTP_PORT:-80}:80
+      - ${LOKIT_NGINX_HTTPS_PORT:-443}:443
       - ${LOKIT_NGINX_MQTT_PORT:-1883}:1883
+    environment:
+      LOKIT_NGINX_PUBLIC_PORT: ${LOKIT_NGINX_HTTP_PORT:-80}
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/web:/lokit/certs/web:ro
     networks:
       - lokit-internal
     depends_on:
@@ -27,8 +30,10 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${LOKIT_KEYCLOAK_ADMIN_USERNAME:?error}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${LOKIT_KEYCLOAK_ADMIN_PASSWORD:?error}
       KC_HOSTNAME_URL: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}
+      KC_HTTP_ENABLED: true
+      KC_HTTP_RELATIVE_PATH: "/auth"
       KC_HOSTNAME_STRICT: "false"
-      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: "xforwarded"
     command:
       - start-dev
     networks:
@@ -127,9 +132,9 @@ services:
       LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PATH: /lokit/certs/server/identity-server-truststore.p12
       LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD:?error}
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
-      LOKIT_KEYCLOAK_URL: http://keycloak:8080
+      LOKIT_KEYCLOAK_URL: http://keycloak:8080/auth
       LOKIT_KEYCLOAK_REALM: ${LOKIT_KEYCLOAK_REALM:?error}
       LOKIT_KEYCLOAK_CLIENT_ID: ${LOKIT_KEYCLOAK_CLIENT_ID:?error}
       LOKIT_KEYCLOAK_CLIENT_SECRET: ${LOKIT_KEYCLOAK_CLIENT_SECRET:?error}
@@ -177,7 +182,7 @@ services:
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
@@ -225,7 +230,7 @@ services:
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
@@ -273,7 +278,7 @@ services:
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
@@ -323,7 +328,7 @@ services:
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_DEVICE_MQTT_URL: tcp://mosquitto:1883
       LOKIT_DEVICE_MQTT_CLIENT_ID: device-service
