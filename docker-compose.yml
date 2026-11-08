@@ -2,10 +2,9 @@ services:
   nginx:
     image: nginx:latest
     ports:
+      - ${LOKIT_NGINX_HTTP_PORT:-80}:80
       - ${LOKIT_NGINX_HTTPS_PORT:-443}:443
       - ${LOKIT_NGINX_MQTT_PORT:-1883}:1883
-    environment:
-      LOKIT_NGINX_PUBLIC_PORT: ${LOKIT_NGINX_HTTP_PORT:-80}
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ${LOKIT_TLS_CERTS_PATH:?error}/web:/lokit/certs/web:ro
