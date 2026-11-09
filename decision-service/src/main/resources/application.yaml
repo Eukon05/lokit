@@ -41,10 +41,10 @@ spring:
     bundle:
       jks:
         lokit-decision-client-ssl:
-          keystore.location: classpath:decision-client-keystore.p12
+          keystore.location: file://${LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PATH}
           keystore.password: ${LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PASSWORD}
           keystore.type: PKCS12
-          truststore.location: classpath:decision-client-truststore.p12
+          truststore.location: file://${LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PATH}
           truststore.password: ${LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PASSWORD}
           truststore.type: PKCS12
 

@@ -3,9 +3,11 @@ services:
     image: nginx:latest
     ports:
       - ${LOKIT_NGINX_HTTP_PORT:-80}:80
+      - ${LOKIT_NGINX_HTTPS_PORT:-443}:443
       - ${LOKIT_NGINX_MQTT_PORT:-1883}:1883
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/web:/lokit/certs/web:ro
     networks:
       - lokit-internal
     depends_on:
@@ -27,8 +29,10 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${LOKIT_KEYCLOAK_ADMIN_USERNAME:?error}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${LOKIT_KEYCLOAK_ADMIN_PASSWORD:?error}
       KC_HOSTNAME_URL: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}
+      KC_HTTP_ENABLED: true
+      KC_HTTP_RELATIVE_PATH: "/auth"
       KC_HOSTNAME_STRICT: "false"
-      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: "xforwarded"
     command:
       - start-dev
     networks:
@@ -122,18 +126,23 @@ services:
       LOKIT_IDENTITY_DB_URL: jdbc:postgresql://postgres:5432/identity
       LOKIT_IDENTITY_GRPC_PORT: 9090
       LOKIT_IDENTITY_PORT: 8080
+      LOKIT_IDENTITY_TLS_SERVER_KEYSTORE_PATH: /lokit/certs/server/identity-server-keystore.p12
       LOKIT_IDENTITY_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_IDENTITY_TLS_SERVER_KEYSTORE_PASSWORD:?error}
+      LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PATH: /lokit/certs/server/identity-server-truststore.p12
       LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD:?error}
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
-      LOKIT_KEYCLOAK_URL: http://keycloak:8080
+      LOKIT_KEYCLOAK_URL: http://keycloak:8080/auth
       LOKIT_KEYCLOAK_REALM: ${LOKIT_KEYCLOAK_REALM:?error}
       LOKIT_KEYCLOAK_CLIENT_ID: ${LOKIT_KEYCLOAK_CLIENT_ID:?error}
       LOKIT_KEYCLOAK_CLIENT_SECRET: ${LOKIT_KEYCLOAK_CLIENT_SECRET:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
       on-failure
+    volumes:
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/identity/identity-server-keystore.p12:/lokit/certs/server/identity-server-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/identity/identity-server-truststore.p12:/lokit/certs/server/identity-server-truststore.p12:ro
 
   role-service:
     image: eukon/lokit-role
@@ -159,20 +168,29 @@ services:
       LOKIT_ROLE_GRPC_PORT: 9090
       LOKIT_ROLE_PORT: 8080
       LOKIT_IDENTITY_GRPC_TARGET: static://identity-service:9090
+      LOKIT_ROLE_TLS_SERVER_KEYSTORE_PATH: /lokit/certs/server/role-server-keystore.p12
       LOKIT_ROLE_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_ROLE_TLS_SERVER_KEYSTORE_PASSWORD:?error}
+      LOKIT_ROLE_TLS_SERVER_TRUSTSTORE_PATH: /lokit/certs/server/role-server-truststore.p12
       LOKIT_ROLE_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_ROLE_TLS_SERVER_TRUSTSTORE_PASSWORD:?error}
+      LOKIT_ROLE_TLS_CLIENT_KEYSTORE_PATH: /lokit/certs/client/role-client-keystore.p12
       LOKIT_ROLE_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_ROLE_TLS_CLIENT_KEYSTORE_PASSWORD:?error}
+      LOKIT_ROLE_TLS_CLIENT_TRUSTSTORE_PATH: /lokit/certs/client/role-client-truststore.p12
       LOKIT_ROLE_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_ROLE_TLS_CLIENT_TRUSTSTORE_PASSWORD:?error}
       LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME:?error}
       LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD:?error}
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
       on-failure
+    volumes:
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/role/role-server-keystore.p12:/lokit/certs/server/role-server-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/role/role-server-truststore.p12:/lokit/certs/server/role-server-truststore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/role/role-client-keystore.p12:/lokit/certs/client/role-client-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/role/role-client-truststore.p12:/lokit/certs/client/role-client-truststore.p12:ro
 
   room-service:
     image: eukon/lokit-room
@@ -198,20 +216,29 @@ services:
       LOKIT_ROOM_GRPC_PORT: 9090
       LOKIT_ROOM_PORT: 8080
       LOKIT_ROLE_GRPC_TARGET: static://role-service:9090
+      LOKIT_ROOM_TLS_SERVER_KEYSTORE_PATH: /lokit/certs/server/room-server-keystore.p12
       LOKIT_ROOM_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_ROOM_TLS_SERVER_KEYSTORE_PASSWORD:?error}
+      LOKIT_ROOM_TLS_SERVER_TRUSTSTORE_PATH: /lokit/certs/server/room-server-truststore.p12
       LOKIT_ROOM_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_ROOM_TLS_SERVER_TRUSTSTORE_PASSWORD:?error}
+      LOKIT_ROOM_TLS_CLIENT_KEYSTORE_PATH: /lokit/certs/client/room-client-keystore.p12
       LOKIT_ROOM_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_ROOM_TLS_CLIENT_KEYSTORE_PASSWORD:?error}
+      LOKIT_ROOM_TLS_CLIENT_TRUSTSTORE_PATH: /lokit/certs/client/room-client-truststore.p12
       LOKIT_ROOM_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_ROOM_TLS_CLIENT_TRUSTSTORE_PASSWORD:?error}
       LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME:?error}
       LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD:?error}
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
       on-failure
+    volumes:
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/room/room-server-keystore.p12:/lokit/certs/server/room-server-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/room/room-server-truststore.p12:/lokit/certs/server/room-server-truststore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/room/room-client-keystore.p12:/lokit/certs/client/room-client-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/room/room-client-truststore.p12:/lokit/certs/client/room-client-truststore.p12:ro
 
   card-service:
     image: eukon/lokit-card
@@ -237,20 +264,29 @@ services:
       LOKIT_CARD_GRPC_PORT: 9090
       LOKIT_CARD_PORT: 8080
       LOKIT_IDENTITY_GRPC_TARGET: static://identity-service:9090
+      LOKIT_CARD_TLS_SERVER_KEYSTORE_PATH: /lokit/certs/server/card-server-keystore.p12
       LOKIT_CARD_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_CARD_TLS_SERVER_KEYSTORE_PASSWORD:?error}
+      LOKIT_CARD_TLS_SERVER_TRUSTSTORE_PATH: /lokit/certs/server/card-server-truststore.p12
       LOKIT_CARD_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_CARD_TLS_SERVER_TRUSTSTORE_PASSWORD:?error}
+      LOKIT_CARD_TLS_CLIENT_KEYSTORE_PATH: /lokit/certs/client/card-client-keystore.p12
       LOKIT_CARD_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_CARD_TLS_CLIENT_KEYSTORE_PASSWORD:?error}
+      LOKIT_CARD_TLS_CLIENT_TRUSTSTORE_PATH: /lokit/certs/client/card-client-truststore.p12
       LOKIT_CARD_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_CARD_TLS_CLIENT_TRUSTSTORE_PASSWORD:?error}
       LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME:?error}
       LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD:?error}
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
       on-failure
+    volumes:
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/card/card-server-keystore.p12:/lokit/certs/server/card-server-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/card/card-server-truststore.p12:/lokit/certs/server/card-server-truststore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/card/card-client-keystore.p12:/lokit/certs/client/card-client-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/card/card-client-truststore.p12:/lokit/certs/client/card-client-truststore.p12:ro
 
   device-service:
     image: eukon/lokit-device
@@ -278,16 +314,20 @@ services:
       LOKIT_DEVICE_GRPC_PORT: 9090
       LOKIT_DEVICE_PORT: 8080
       LOKIT_ROOM_GRPC_TARGET: static://room-service:9090
+      LOKIT_DEVICE_TLS_SERVER_KEYSTORE_PATH: /lokit/certs/server/device-server-keystore.p12
       LOKIT_DEVICE_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_SERVER_KEYSTORE_PASSWORD:?error}
+      LOKIT_DEVICE_TLS_SERVER_TRUSTSTORE_PATH: /lokit/certs/server/device-server-truststore.p12
       LOKIT_DEVICE_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_SERVER_TRUSTSTORE_PASSWORD:?error}
+      LOKIT_DEVICE_TLS_CLIENT_KEYSTORE_PATH: /lokit/certs/client/device-client-keystore.p12
       LOKIT_DEVICE_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_CLIENT_KEYSTORE_PASSWORD:?error}
+      LOKIT_DEVICE_TLS_CLIENT_TRUSTSTORE_PATH: /lokit/certs/client/device-client-truststore.p12
       LOKIT_DEVICE_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_DEVICE_TLS_CLIENT_TRUSTSTORE_PASSWORD:?error}
       LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME:?error}
       LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD:?error}
       LOKIT_RABBITMQ_HOST: rabbitmq
       LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
-      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
+      LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}
       LOKIT_DEVICE_MQTT_URL: tcp://mosquitto:1883
       LOKIT_DEVICE_MQTT_CLIENT_ID: device-service
@@ -296,6 +336,11 @@ services:
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
       on-failure
+    volumes:
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/device/device-server-keystore.p12:/lokit/certs/server/device-server-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/server/device/device-server-truststore.p12:/lokit/certs/server/device-server-truststore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/device/device-client-keystore.p12:/lokit/certs/client/device-client-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/device/device-client-truststore.p12:/lokit/certs/client/device-client-truststore.p12:ro
 
   decision-service:
     image: eukon/lokit-decision
@@ -322,7 +367,9 @@ services:
         condition: service_started
     environment:
       LOKIT_DECISION_PORT: 8080
+      LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PATH: /lokit/certs/client/decision-client-keystore.p12
       LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PASSWORD: ${LOKIT_DECISION_TLS_CLIENT_KEYSTORE_PASSWORD:?error}
+      LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PATH: /lokit/certs/client/decision-client-truststore.p12
       LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PASSWORD: ${LOKIT_DECISION_TLS_CLIENT_TRUSTSTORE_PASSWORD:?error}
       LOKIT_REDIS_HOST: redis
       LOKIT_REDIS_PORT: 6379
@@ -337,6 +384,9 @@ services:
       LOKIT_LOGGING_LEVEL: ${LOKIT_LOGGING_LEVEL:-info}
     restart:
       on-failure
+    volumes:
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/decision/decision-client-keystore.p12:/lokit/certs/client/decision-client-keystore.p12:ro
+      - ${LOKIT_TLS_CERTS_PATH:?error}/client/decision/decision-client-truststore.p12:/lokit/certs/client/decision-client-truststore.p12:ro
 
 networks:
   lokit-internal:
