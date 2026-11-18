@@ -10,6 +10,12 @@ spring:
     hibernate:
       ddl-auto: validate
 
+  rabbitmq:
+    username: ${LOKIT_RABBITMQ_USERNAME}
+    password: ${LOKIT_RABBITMQ_PASSWORD}
+    host: ${LOKIT_RABBITMQ_HOST}
+    port: ${LOKIT_RABBITMQ_PORT}
+
   grpc:
     server:
       port: ${LOKIT_IDENTITY_GRPC_PORT}

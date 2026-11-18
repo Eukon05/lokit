@@ -120,6 +120,8 @@ services:
         condition: service_started
       postgres:
         condition: service_healthy
+      rabbitmq:
+        condition: service_started
     environment:
       LOKIT_IDENTITY_DB_USERNAME: ${LOKIT_POSTGRES_USERNAME:?error}
       LOKIT_IDENTITY_DB_PASSWORD: ${LOKIT_POSTGRES_PASSWORD:?error}
@@ -130,6 +132,10 @@ services:
       LOKIT_IDENTITY_TLS_SERVER_KEYSTORE_PASSWORD: ${LOKIT_IDENTITY_TLS_SERVER_KEYSTORE_PASSWORD:?error}
       LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PATH: /lokit/certs/server/identity-server-truststore.p12
       LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD: ${LOKIT_IDENTITY_TLS_SERVER_TRUSTSTORE_PASSWORD:?error}
+      LOKIT_RABBITMQ_USERNAME: ${LOKIT_RABBITMQ_USERNAME:?error}
+      LOKIT_RABBITMQ_PASSWORD: ${LOKIT_RABBITMQ_PASSWORD:?error}
+      LOKIT_RABBITMQ_HOST: rabbitmq
+      LOKIT_RABBITMQ_PORT: 5672
       LOKIT_OAUTH_ISSUER_URI: ${LOKIT_KEYCLOAK_PUBLIC_URL:?error}/realms/${LOKIT_KEYCLOAK_REALM:?error}
       LOKIT_OAUTH_JWK_URI: http://keycloak:8080/auth/realms/${LOKIT_KEYCLOAK_REALM:?error}/protocol/openid-connect/certs
       LOKIT_JWT_ROLE_CLAIMS: ${LOKIT_JWT_ROLE_CLAIMS:?error}

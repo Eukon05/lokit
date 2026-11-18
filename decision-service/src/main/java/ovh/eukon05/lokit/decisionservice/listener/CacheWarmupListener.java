@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import ovh.eukon05.lokit.decisionservice.cache.DecisionCache;
 import ovh.eukon05.lokit.decisionservice.client.CardServiceClient;
 import ovh.eukon05.lokit.decisionservice.client.DeviceServiceClient;
 import ovh.eukon05.lokit.decisionservice.client.RoleServiceClient;
@@ -17,10 +17,11 @@ import ovh.eukon05.lokit.decisionservice.model.DeviceState;
 import ovh.eukon05.lokit.decisionservice.model.RoomState;
 import ovh.eukon05.lokit.decisionservice.model.UserState;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static ovh.eukon05.lokit.decisionservice.cache.RedisCacheKeys.*;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class CacheWarmupListener {
     private final DeviceServiceClient deviceClient;
     private final RoomServiceClient roomClient;
     private final CardServiceClient cardClient;
-    private final StringRedisTemplate redis;
+    private final DecisionCache decisionCache;
 
     @EventListener(ApplicationStartedEvent.class)
     public void populateCache() throws InterruptedException {
@@ -39,7 +40,7 @@ public class CacheWarmupListener {
 
         while (!isPopulated) {
             try {
-                saveGrpcDataToRedis();
+                saveGrpcDataToCache();
                 isPopulated = true;
             } catch (StatusRuntimeException e) {
                 if (e.getStatus().getCode() == Status.Code.UNAVAILABLE) {
@@ -52,8 +53,9 @@ public class CacheWarmupListener {
 
     }
 
-    private void saveGrpcDataToRedis() {
+    private void saveGrpcDataToCache() {
         log.info("Starting cache warmup!");
+
         log.debug("Fetching devices through gRPC...");
         List<DeviceState> devices = deviceClient.listActiveDevices();
 
@@ -67,112 +69,49 @@ public class CacheWarmupListener {
         List<UserState> users = roleClient.listUserRoles();
 
         log.debug("Fetching roles through gRPC...");
-        String[] roleIds = roleClient.listActiveRoles().stream().map(UUID::toString).toArray(String[]::new);
+        List<UUID> roleIds = roleClient.listActiveRoles();
 
-        log.debug("Saving active roles to Redis...");
-        addSetMembers(REDIS_ACTIVE_ROLES_KEY, roleIds);
+        log.debug("Saving active roles...");
+        decisionCache.addActiveRoles(roleIds);
 
-        log.debug("Saving active cards to Redis...");
-        cards.forEach(card -> redis.opsForSet().add(REDIS_ACTIVE_CARDS_KEY, card.id()));
+        log.debug("Saving active cards...");
+        decisionCache.addActiveCards(cards.stream().map(CardState::id).toList());
 
-        log.debug("Saving active rooms to Redis...");
-        rooms.forEach(room -> redis.opsForSet().add(REDIS_ACTIVE_ROOMS_KEY, room.id().toString()));
+        log.debug("Saving active rooms...");
+        decisionCache.addActiveRooms(rooms.stream().map(RoomState::id).toList());
 
-        Map<String, String> deviceMap = devices.stream()
+        Map<UUID, UUID> deviceRooms = devices.stream()
                 .filter(dev -> dev.roomId() != null)
-                .collect(Collectors.toMap(dev -> REDIS_DEVICE_ROOM_MAPPING_KEY.formatted(dev.id()), dev -> dev.roomId().toString()));
+                .collect(Collectors.toMap(DeviceState::id, DeviceState::roomId));
 
-        Map<String, String> deviceTokenMap = devices.stream()
+        Map<UUID, String> deviceTokens = devices.stream()
                 .filter(dev -> dev.tokenHash() != null && !dev.tokenHash().isBlank())
-                .collect(Collectors.toMap(dev -> REDIS_DEVICE_TOKEN_HASH_MAPPING_KEY.formatted(dev.id()), DeviceState::tokenHash));
+                .collect(Collectors.toMap(DeviceState::id, DeviceState::tokenHash));
 
-        Map<String, String> tokenDeviceMap = devices.stream()
-                .filter(dev -> dev.tokenHash() != null && !dev.tokenHash().isBlank())
-                .collect(Collectors.toMap(dev -> REDIS_TOKEN_HASH_DEVICE_MAPPING_KEY.formatted(dev.tokenHash()), dev -> dev.id().toString()));
+        Map<String, UUID> cardUsers = cards.stream()
+                .collect(Collectors.toMap(CardState::id, CardState::userId));
 
-        Map<String, String> cardMap = cards.stream()
-                .collect(Collectors.toMap(card -> REDIS_CARD_USER_MAPPING_KEY.formatted(card.id()), card -> card.userId().toString()));
+        Map<UUID, Set<UUID>> userRoles = users.stream()
+                .collect(Collectors.toMap(UserState::id, UserState::roles));
 
-        Map<String, Set<String>> userCardMap = cards.stream()
-                .collect(Collectors.groupingBy(
-                        card -> REDIS_USER_CARDS_SET_KEY.formatted(card.userId()),
-                        Collectors.mapping(CardState::id, Collectors.toSet())
-                ));
+        Map<UUID, Set<UUID>> roomRoles = rooms.stream()
+                .collect(Collectors.toMap(RoomState::id, RoomState::roles));
 
-        Map<String, Set<String>> userMap = users.stream()
-                .collect(Collectors.toMap(u -> REDIS_USER_ROLES_SET_KEY.formatted(u.id()), u -> u.roles().stream().map(UUID::toString).collect(Collectors.toSet())));
+        log.debug("Saving device-room mappings...");
+        decisionCache.setDeviceRooms(deviceRooms);
 
-        Map<String, Set<String>> roomMap = rooms.stream()
-                .collect(Collectors.toMap(room -> REDIS_ROOM_ROLES_SET_KEY.formatted(room.id()), room -> room.roles().stream().map(UUID::toString).collect(Collectors.toSet())));
+        log.debug("Saving device-token mappings...");
+        decisionCache.addTokens(deviceTokens);
 
-        Map<String, Set<String>> roomDevicesMap = devices.stream()
-                .filter(dev -> dev.roomId() != null)
-                .collect(Collectors.groupingBy(
-                        dev -> REDIS_ROOM_DEVICES_SET_KEY.formatted(dev.roomId()),
-                        Collectors.mapping(dev -> dev.id().toString(), Collectors.toSet())
-                ));
+        log.debug("Saving card-user mappings...");
+        decisionCache.setCardUsers(cardUsers);
 
-        Map<String, Set<String>> roleRoomsMap = new HashMap<>();
-        for (RoomState room : rooms) {
-            for (UUID roleId : room.roles()) {
-                roleRoomsMap.computeIfAbsent(REDIS_ROLE_ROOMS_SET_KEY.formatted(roleId), ignored -> new HashSet<>())
-                        .add(room.id().toString());
-            }
-        }
+        log.debug("Saving user-role mappings...");
+        decisionCache.addRolesToUsers(userRoles);
 
-        Map<String, Set<String>> roleUsersMap = new HashMap<>();
-        for (UserState user : users) {
-            for (UUID roleId : user.roles()) {
-                roleUsersMap.computeIfAbsent(REDIS_ROLE_USERS_SET_KEY.formatted(roleId), ignored -> new HashSet<>())
-                        .add(user.id().toString());
-            }
-        }
-
-        log.debug("Saving user-role mappings to Redis...");
-        userMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
-
-        log.debug("Saving user-card mappings to Redis...");
-        userCardMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
-
-        log.debug("Saving room-role mappings to Redis...");
-        roomMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
-
-        log.debug("Saving room-device reverse indexes to Redis...");
-        roomDevicesMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
-
-        log.debug("Saving role-room reverse indexes to Redis...");
-        roleRoomsMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
-
-        log.debug("Saving role-user reverse indexes to Redis...");
-        roleUsersMap.forEach((k, v) -> addSetMembers(k, v.toArray(String[]::new)));
-
-        log.debug("Saving device-room mappings to Redis...");
-        if (!deviceMap.isEmpty()) {
-            redis.opsForValue().multiSet(deviceMap);
-        }
-
-        log.debug("Saving device-token mappings to Redis...");
-        if (!deviceTokenMap.isEmpty()) {
-            redis.opsForValue().multiSet(deviceTokenMap);
-        }
-        if (!tokenDeviceMap.isEmpty()) {
-            redis.opsForValue().multiSet(tokenDeviceMap);
-        }
-
-        log.debug("Saving card-user mappings to Redis...");
-        if (!cardMap.isEmpty()) {
-            redis.opsForValue().multiSet(cardMap);
-        }
+        log.debug("Saving room-role mappings...");
+        decisionCache.addRolesToRooms(roomRoles);
 
         log.info("Cache warmup complete!");
-    }
-
-    private void addSetMembers(String key, String[] members) {
-        if (members.length == 0) {
-            log.debug("Skipping Redis set {} because there are no members to add", key);
-            return;
-        }
-
-        redis.opsForSet().add(key, members);
     }
 }
